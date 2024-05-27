@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Haven</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="icons/logo_192.png" type="image/png" sizes="192x192">
+</head>
+<body>
+    <header>
+        <img class="lazy" data-src="icons/logo_192.png" alt="Icon" />
+        <h1>Hardware Haven</h1>
+        <button id="help-button">Help</button>
+    </header>
+    <main>
+        <div class="row">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search...">
+                <button id="search-button">Search</button>
+            </div>
+            <p id="offline-warning">Some functionalities may be limited when offline.</p>
+            <button id="add-button">Add</button>
+        </div>
+        <ul id="items-list">
+        </ul>
+    </main>
+    
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title"></h2>
+
+            <input type="hidden" id="item-hidden-id">
+
+            <label for="item-name">Item name:</label>
+            <input type="text" id="item-name">
+
+            <label for="item-price">Item price:</label>
+            <input type="number" id="item-price">
+
+            <p id="item-error"></p>
+
+            <button id="save-button">Save</button>
+            <button id="delete-button">Delete</button>
+        </div>
+    </div>
+
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h1>Voice Commands</h1>
+            <p>Command in () is optional</p>
+            <div class="command">
+                <strong>Command:</strong> Hello<br>
+                <strong>Action:</strong> Says "Hello"
+            </div>
+            <div class="command">
+                <strong>Command:</strong> Hello My name is *name<br>
+                <strong>Action:</strong> Greets with the provided name
+            </div>
+            <div class="command">
+                <strong>Command:</strong>(Please) Help<br>
+                <strong>Action:</strong> Shows voice command options
+            </div>
+            <div class="command">
+                <strong>Command:</strong> (Please) search *name<br>
+                <strong>Action:</strong> Searches for the provided term
+            </div>
+            <div class="command">
+                <strong>Command:</strong> (Please) clear search<br>
+                <strong>Action:</strong> Clears the search input
+            </div>
+            <div class="command">
+                <strong>Command:</strong> (Please) click *name<br>
+                <strong>Action:</strong> Clicks the button with the specified name
+            </div>
+            <div class="command">
+                <strong>Command:</strong> (Please) set *value to (item) *input<br>
+                <strong>Action:</strong> Sets the value of the specified input
+            </div>
+            <div class="command">
+                <strong>Command:</strong> (Please) add *value to (item) *input<br>
+                <strong>Action:</strong> Adds value to the specified input
+            </div>
+            <div class="command">
+                <strong>Command:</strong> (Please) subtract *value from (item) price<br>
+                <strong>Action:</strong> Subtracts value from the input price
+            </div>
+        </div>
+    </div>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
