@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-header {
+header, .bg-theme {
   background-color: #0b3244;
 }
