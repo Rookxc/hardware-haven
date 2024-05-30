@@ -36,7 +36,7 @@ To set up the Hardware Haven project locally, follow these steps:
    ```bash
    cd hardware-haven
    ```
-3.  **Start the development server**
+3. **Start the development server**
    ```bash
    cd src/ExpressJS
    npm install
