@@ -1,7 +1,38 @@
+/* src/index.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 header, .bg-theme {
   background-color: #0a3346;
+}
+
+.header {
+  @apply text-white py-4;
+}
+
+.container {
+  @apply max-w-md mx-auto p-8;
+}
+
+.form-label {
+  @apply block text-gray-700 text-sm font-bold mb-2;
+}
+
+.form-input {
+  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+.form-button {
+  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+}
+
+.message {
+  @apply mt-4 text-center;
+}
+
+.centered-container {
+  @apply flex items-center justify-center min-h-screen bg-gray-100;
+  margin-bottom: 40vh; /* Adjust this value as needed to move the form higher */
 }

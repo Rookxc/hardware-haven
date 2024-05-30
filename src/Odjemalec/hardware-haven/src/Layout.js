@@ -30,6 +30,9 @@ function Layout() {
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <a href="/login" className="text-sm font-semibold leading-6 text-white">Log in <span aria-hidden="true">&rarr;</span></a>
           </div>
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+            <a href="/register" className="text-sm font-semibold leading-6 text-white">Register <span aria-hidden="true">&rarr;</span></a>
+          </div>
         </nav>
         {mobileMenuOpen &&
           <div className="lg:hidden" role="dialog" aria-modal="true">
