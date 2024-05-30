@@ -28,7 +28,7 @@ function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100" style={{ marginBottom: '10vh' }}>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
         <form onSubmit={handleSubmit}>

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import './App.css';
+import { GiShoppingCart } from 'react-icons/gi';
+import { BsPerson } from 'react-icons/bs';
 
 function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -51,8 +53,14 @@ function Layout() {
               <div className="mt-6 flow-root">
                 <div className="-my-6 divide-y divide-white/20">
                   <div className="space-y-2 py-6">
-                    <a href="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/10">Shop</a>
-                    <a href="/profile" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/10">Profile</a>
+                    <a href="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/10">
+                      <GiShoppingCart className="h-6 w-6 inline-block mr-2" />
+                      Shop
+                    </a>
+                    <a href="/profile" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/10">
+                      <BsPerson className="h-6 w-6 inline-block mr-2" />
+                      Profile
+                    </a>
                   </div>
                   <div className="py-6">
                     <a href="/login" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">Log in</a>
