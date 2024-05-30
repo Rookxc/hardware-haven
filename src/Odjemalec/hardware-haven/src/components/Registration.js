@@ -18,6 +18,10 @@ function Register() {
         password
       });
       setMessage('Registration successful');
+      //change this later
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1000);
     } catch (error) {
       setMessage('Registration failed');
     }
@@ -40,7 +44,7 @@ function Register() {
             />
           </div>
           <div className="mb-4">
-            <label className="form-label" htmlFor="surname">Username:</label> {/* Add surname field */}
+            <label className="form-label" htmlFor="surname">Surname:</label> {/* Add surname field */}
             <input
               className="form-input"
               type="text"

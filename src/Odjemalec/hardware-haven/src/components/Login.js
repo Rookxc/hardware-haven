@@ -14,6 +14,10 @@ function Login() {
         password
       });
       setMessage('Login successful');
+      //change this later
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1000);
     } catch (error) {
       setMessage('Login failed');
     }
