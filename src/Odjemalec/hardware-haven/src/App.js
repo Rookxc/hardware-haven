@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import Layout from './Layout';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Shop from './Shop';
+import Shop from './shop/Shop';
+import ItemDetail from './shop/ItemDetail';
 import Login from './components/Login';
 import Register from './components/Registration';
 import UserProfile from './components/UserProfile';
@@ -61,6 +62,7 @@ function App() {
             <Route path="profile" element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />} />
             <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
+            <Route path="item-detail/:id" element={<ItemDetail /> } />
           </Route>
         </Routes>
       </BrowserRouter>
