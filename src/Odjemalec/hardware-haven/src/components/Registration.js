@@ -24,7 +24,7 @@ function Register() {
   return (
     <div className="centered-container">
       <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" style={{ marginBottom: '10vh' }}>
-        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Sign up</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="form-label" htmlFor="name">Name:</label>

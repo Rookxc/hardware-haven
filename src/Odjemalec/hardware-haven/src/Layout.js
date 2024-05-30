@@ -12,7 +12,7 @@ function Layout() {
           <div className="flex lg:flex-1">
             <a href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Hardware Haven</span>
-              <img className="h-14 w-auto" src="logo192.png" alt="Icon" />
+              <img className="h-12 w-auto" src="logo192.png" alt="Icon" />
             </a>
           </div>
           <div className="flex lg:hidden">
@@ -28,10 +28,8 @@ function Layout() {
             <a href="/profile" className="text-sm font-semibold leading-6 text-white">Profile</a>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="/login" className="text-sm font-semibold leading-6 text-white">Log in <span aria-hidden="true">&rarr;</span></a>
-          </div>
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="/register" className="text-sm font-semibold leading-6 text-white">Register <span aria-hidden="true">&rarr;</span></a>
+            <a href="/login" className="text-sm font-semibold leading-6 text-white">Log in&nbsp;&nbsp;|&nbsp;&nbsp;<span aria-hidden="true"></span></a>
+            <a href="/register" className="text-sm font-semibold leading-6 text-white">Sign up <span aria-hidden="true"></span></a>
           </div>
         </nav>
         {mobileMenuOpen &&
@@ -58,6 +56,7 @@ function Layout() {
                   </div>
                   <div className="py-6">
                     <a href="/login" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">Log in</a>
+                    <a href="/register" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">Sign up</a>
                   </div>
                 </div>
               </div>
