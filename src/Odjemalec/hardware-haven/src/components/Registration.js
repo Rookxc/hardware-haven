@@ -4,6 +4,7 @@ import axios from 'axios';
 function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState(''); 
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
@@ -13,6 +14,7 @@ function Register() {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
         name,
         email,
+        username,
         password
       });
       setMessage('Registration successful');
@@ -34,6 +36,17 @@ function Register() {
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="form-label" htmlFor="username">Username:</label> {/* Add username field */}
+            <input
+              className="form-input"
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
