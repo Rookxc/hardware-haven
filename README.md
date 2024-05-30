@@ -38,11 +38,15 @@ To set up the Hardware Haven project locally, follow these steps:
    ```
 3.  **Start the development server**
    ```bash
-   npm run dev
+   cd src/ExpressJS
+   npm install
+   npm run start
    ```
 4. **Start the frontend server**
    ```bash
-   Right click on index.html -> start with live server
+   cd src/Odjemalec/hardware-haven
+   npm install
+   npm run start
    ```
 
 ## Usage
