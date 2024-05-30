@@ -10,7 +10,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/register`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
         name,
         email,
         password
@@ -22,9 +22,9 @@ function Register() {
   };
 
   return (
-    <div className="centered-container">
-      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" style={{ marginBottom: '10vh' }}>
-        <h2 className="text-2xl font-bold mb-4 text-center">Sign up</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100" style={{ marginBottom: '10vh' }}>
+      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="form-label" htmlFor="name">Name:</label>

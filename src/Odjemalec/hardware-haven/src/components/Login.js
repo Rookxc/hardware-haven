@@ -9,20 +9,19 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
         email,
         password
       });
       setMessage('Login successful');
-      // You can save the token or redirect the user here
     } catch (error) {
       setMessage('Login failed');
     }
   };
 
   return (
-    <div className="centered-container">
-      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" style={{ marginBottom: '10vh' }}>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100" style={{ marginBottom: '10vh' }}>
+      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

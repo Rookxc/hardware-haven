@@ -5,8 +5,21 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config();
+console.log('MongoDB connected...', process.env.MONGODB_CONN)
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_CONN, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  })
+    .then(() => console.log('MongoDB connected...'))
+      .catch(err => console.error('MongoDB connection error:', err));
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var authRouter = require('./routes/auth'); // Require the auth routes
 
 var app = express();
 
@@ -24,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api/auth', authRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
