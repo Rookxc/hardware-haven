@@ -3,9 +3,9 @@ import './App.css';
 import Layout from './Layout';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Shop from './Shop';
-import Profile from './Profile';
 import Login from './components/Login';
 import Register from './components/Registration';
+import UserProfile from './components/UserProfile';
 import axios from 'axios';
 
 function App() {
@@ -58,7 +58,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Shop />} />
-            <Route path="profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} />
+            <Route path="profile" element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />} />
             <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
           </Route>
