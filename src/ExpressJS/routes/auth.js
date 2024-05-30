@@ -1,5 +1,3 @@
-// src/ExpressJS/routes/auth.js
-
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
@@ -9,9 +7,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 router.post('/register', async (req, res) => {
-    const { name, email, username, password } = req.body;
+    const { name, email, surname, password } = req.body;
     try {
-      const userExists = await User.findOne({ $or: [{ email }, { username }] });
+      const userExists = await User.findOne({ $or: [{ email }, { surname }] });
   
       if (userExists) {
         return res.status(400).json({ message: 'User already exists' });
@@ -20,7 +18,7 @@ router.post('/register', async (req, res) => {
       const user = await User.create({
         name,
         email,
-        username,
+        surname,
         password,
       });
   
@@ -28,7 +26,7 @@ router.post('/register', async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        username: user.username,
+        surname: user.surname,
         token: generateToken(user._id),
       });
     } catch (error) {
