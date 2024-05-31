@@ -162,7 +162,7 @@ function UserProfile() {
 
   return (
     <div className="centered-container">
-      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" style={{ marginBottom: '10vh' }}>
+      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-center">User Profile</h2>
           {editingState === EditingState.NONE &&
