@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../helpers/AxiosInstance';
 
 function Register() {
   const [name, setName] = useState('');
@@ -11,7 +11,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
+      const response = await axiosInstance.post(`/api/auth/register`, {
         name,
         email,
         surname,

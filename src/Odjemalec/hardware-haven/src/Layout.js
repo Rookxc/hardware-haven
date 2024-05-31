@@ -3,9 +3,10 @@ import { Outlet } from 'react-router-dom';
 import './App.css';
 import { GiShoppingCart } from 'react-icons/gi';
 import { BsPerson } from 'react-icons/bs';
+import { FiLogOut } from "react-icons/fi";
 
-function Layout() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+function Layout({ isAuthenticated }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="App">
@@ -27,11 +28,33 @@ function Layout() {
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
             <a href="/" className="text-sm font-semibold leading-6 text-white">Shop</a>
-            <a href="/profile" className="text-sm font-semibold leading-6 text-white">Profile</a>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="/login" className="text-sm font-semibold leading-6 text-white">Log in&nbsp;&nbsp;|&nbsp;&nbsp;<span aria-hidden="true"></span></a>
-            <a href="/register" className="text-sm font-semibold leading-6 text-white">Sign up <span aria-hidden="true"></span></a>
+            {isAuthenticated ?
+              <div className="flex items-center space-x-2">
+                <a href="/profile" className="text-sm font-semibold leading-6 text-white">
+                  Profile
+                </a>
+                <span className="inline-flex items-center text-sm font-semibold leading-6 text-white cursor-default">
+                  |
+                </span>
+                <a href="/logout" className="text-sm font-semibold leading-6 text-white">
+                  <FiLogOut className="h-4 w-4" />
+                </a>
+              </div>
+              :
+              <div className="flex items-center space-x-2">
+                <a href="/login" className="text-sm font-semibold leading-6 text-white">
+                  Log in
+                </a>
+                <span className="inline-flex items-center text-sm font-semibold leading-6 text-white cursor-default">
+                  |
+                </span>
+                <a href="/register" className="text-sm font-semibold leading-6 text-white">
+                  Sign up
+                </a>
+              </div>
+            }
           </div>
         </nav>
         {mobileMenuOpen &&
@@ -54,17 +77,26 @@ function Layout() {
                 <div className="-my-6 divide-y divide-white/20">
                   <div className="space-y-2 py-6">
                     <a href="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/10">
-                      <GiShoppingCart className="h-6 w-6 inline-block mr-2" />
                       Shop
-                    </a>
-                    <a href="/profile" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/10">
-                      <BsPerson className="h-6 w-6 inline-block mr-2" />
-                      Profile
                     </a>
                   </div>
                   <div className="py-6">
-                    <a href="/login" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">Log in</a>
-                    <a href="/register" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">Sign up</a>
+                    {isAuthenticated ?
+                      <>
+                        <a href="/login" className="block -mx-3 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">
+                          Profile
+                        </a>
+                        <a href="/logout" className="flex items-center justify-start -mx-3 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">
+                          <span>Log Out</span>
+                          <FiLogOut className="w-4 h-4 ml-2" />
+                        </a>
+                      </>
+                      :
+                      <>
+                        <a href="/login" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">Log in</a>
+                        <a href="/register" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">Sign up</a>
+                      </>
+                    }
                   </div>
                 </div>
               </div>

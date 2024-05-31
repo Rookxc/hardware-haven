@@ -1,5 +1,24 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import axiosInstance from '../helpers/AxiosInstance';
+import { TOKEN_KEY, USER_ID_KEY } from '../App';
+import { useNavigate } from 'react-router-dom';
+
+export function Logout() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(USER_ID_KEY);
+    
+    if (window.location.pathname === '/') {
+      window.location.reload();
+    } else {
+      navigate('/');
+    }
+  }, []);
+
+  return null;
+};
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -9,13 +28,14 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+      const response = await axiosInstance.post(`/api/auth/login`, {
         email,
         password
       });
       
-      const { token } = response.data;
-      sessionStorage.setItem('token', token);
+      const { token, _id } = response.data;
+      sessionStorage.setItem(TOKEN_KEY, token);
+      sessionStorage.setItem(USER_ID_KEY, _id);
       
       setMessage('Login successful');
       //change this later

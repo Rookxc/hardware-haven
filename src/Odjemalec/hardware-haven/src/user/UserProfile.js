@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import Input from '../components/Input';
+import { FiEdit2 } from "react-icons/fi";
+import validateEmail from '../helpers/Validator';
+import axiosInstance from '../helpers/AxiosInstance';
+import { USER_ID_KEY } from '../App';
 
 const EditingState = {
   NONE: 'None',
@@ -10,21 +14,22 @@ const EditingState = {
 function UserProfile() {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loadingError, setLoadingError] = useState('');
   const [editingState, setEditingState] = useState(EditingState.NONE);
   const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState({});
   const [editedUser, setEditedUser] = useState({});
   const [editedPassword, setEditedPassword] = useState({});
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/users/6658d4a9668798dba2f83884`);
+        const response = await axiosInstance.get(`/users/${sessionStorage.getItem(USER_ID_KEY)}`);
         setUser(response.data);
         setEditedUser(response.data);
         setLoading(false);
       } catch (error) {
-        setError('Error fetching user data');
+        setLoadingError('Error fetching user data');
         setLoading(false);
       }
     };
@@ -33,38 +38,103 @@ function UserProfile() {
   }, []);
 
   const handleSubmit = async () => {
+    setMessage('');
+
     if (editingState === EditingState.PASSWORD) {
+      let valid = true;
+
+      if (!editedPassword.password) {
+        setErrorChange("password", "This field is required.");
+        valid = false;
+      }
+
       if (!editedPassword.newPassword) {
-        setMessage("New password can't be empty");
+        setErrorChange("newPassword", "This field is required.");
+        valid = false;
       } else if (editedPassword.newPassword !== editedPassword.repeatPassword) {
-        setMessage("New passwords don't match");
-      } else {
+        setErrorChange("repeatPassword", "Passwords don't match.");
+        valid = false;
+      }
+
+      if (true) {
         try {
-          await axios.put(`${process.env.REACT_APP_API_URL}/users/update-password/6658d4a9668798dba2f83884`, editedPassword);
+          await axiosInstance.put(`/users/update-password/${user._id}`, editedPassword);
           setEditingState(EditingState.USER_DATA);
-          setMessage('Password updated successfully');
+          setMessage('Password updated successfully.');
         } catch (error) {
-          if (error && error.response && error.response.data && error.response.data.message) {
-            setMessage(error.response.data.message);
+          const responseData = error?.response?.data;
+
+          if (responseData?.message) {
+            if (responseData.field) {
+              setErrorChange(responseData.field, responseData.message);
+              setMessage('');
+            } else {
+              setMessage(responseData.message);
+            }
           } else {
-            setMessage('Password update failed');
+            setMessage('Password update failed.');
           }
         }
       }
     } else {
-      try {
-        await axios.put(`${process.env.REACT_APP_API_URL}/users/6658d4a9668798dba2f83884`, editedUser);
-        setUser(editedUser);
-        setEditingState(EditingState.NONE);
-        setMessage('Profile updated successfully');
-      } catch (error) {
-        setMessage('Profile update failed');
+      let valid = true;
+
+      if (!editedUser.name) {
+        setErrorChange("name", "This field is required.");
+        valid = false;
+      }
+
+      if (!editedUser.surname) {
+        setErrorChange("surname", "This field is required.");
+        valid = false;
+      }
+
+      if (!editedUser.email) {
+        setErrorChange("email", "This field is required.");
+        valid = false;
+      } else if (!validateEmail(editedUser.email)) {
+        setErrorChange("email", "Please enter a valid email address.");
+        valid = false;
+      }
+
+      if (true) {
+        try {
+          await axiosInstance.put(`/users/${user._id}`, editedUser);
+          setUser(editedUser);
+          setEditingState(EditingState.NONE);
+          setMessage('Profile updated successfully.');
+        } catch (error) {
+          if (error && error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
+            error.response.data.errors.forEach(item => {
+              setErrorChange(item.field, item.message);
+            });
+          } else {
+            setMessage('Profile update failed.');
+          }
+        }
       }
     }
   };
 
-  const handleChange = (e) => {
+  const setErrorChange = (fieldName, value) => {
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+
+      if (!value) {
+        delete newErrors[fieldName];
+      } else {
+        newErrors[fieldName] = value;
+      }
+
+      return newErrors;
+    });
+  };
+
+  const handleUserDataChange = (e) => {
     const { name, value } = e.target;
+
+    setErrorChange(name, false);
+
     setEditedUser((prevUser) => ({
       ...prevUser,
       [name]: value,
@@ -73,8 +143,11 @@ function UserProfile() {
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
-    setEditedPassword((prevUser) => ({
-      ...prevUser,
+
+    setErrorChange(name, false);
+
+    setEditedPassword((prevPassword) => ({
+      ...prevPassword,
       [name]: value,
     }));
   };
@@ -83,8 +156,8 @@ function UserProfile() {
     return <div className="centered-container">Loading...</div>;
   }
 
-  if (error) {
-    return <div className="centered-container">{error}</div>;
+  if (loadingError) {
+    return <div className="centered-container">{loadingError}</div>;
   }
 
   return (
@@ -93,21 +166,11 @@ function UserProfile() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-center">User Profile</h2>
           {editingState === EditingState.NONE &&
-            <button onClick={() => setEditingState(EditingState.USER_DATA)} className="focus:outline-none">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="ml-2 text-gray-500 hover:text-gray-700"
-              >
-                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-              </svg>
+            <button onClick={() => {
+              setMessage('');
+              setEditingState(EditingState.USER_DATA);
+            }} className="focus:outline-none">
+              <FiEdit2 className='w-5 h-5' />
             </button>}
         </div>
         {editingState !== EditingState.PASSWORD &&
@@ -115,13 +178,13 @@ function UserProfile() {
             <div className="mb-4">
               <label className="form-label" htmlFor="name">Name:</label>
               {editingState === EditingState.USER_DATA ? (
-                <input
-                  className="form-input"
+                <Input
                   type="text"
                   id="name"
                   name="name"
                   value={editedUser.name}
-                  onChange={handleChange}
+                  onChange={handleUserDataChange}
+                  error={errors["name"]}
                 />
               ) : (
                 <div className="form-input">{user.name}</div>
@@ -130,13 +193,13 @@ function UserProfile() {
             <div className="mb-4">
               <label className="form-label" htmlFor="surname">Surname:</label>
               {editingState === EditingState.USER_DATA ? (
-                <input
-                  className="form-input"
+                <Input
                   type="text"
                   id="surname"
                   name="surname"
                   value={editedUser.surname}
-                  onChange={handleChange}
+                  onChange={handleUserDataChange}
+                  error={errors["surname"]}
                 />
               ) : (
                 <div className="form-input">{user.surname}</div>
@@ -145,13 +208,13 @@ function UserProfile() {
             <div className="mb-4">
               <label className="form-label" htmlFor="email">Email:</label>
               {editingState === EditingState.USER_DATA ? (
-                <input
-                  className="form-input"
+                <Input
                   type="email"
                   id="email"
                   name="email"
                   value={editedUser.email}
-                  onChange={handleChange}
+                  onChange={handleUserDataChange}
+                  error={errors["email"]}
                 />
               ) : (
                 <div className="form-input">{user.email}</div>
@@ -170,37 +233,38 @@ function UserProfile() {
         {editingState === EditingState.PASSWORD &&
           <>
             <div className="mb-4">
-              <label className="form-label" htmlFor="password">Current Password:</label>
-              <input
-                className="form-input"
+              <Input
+                label="Current Password"
                 type="password"
                 id="password"
                 name="password"
                 onChange={handlePasswordChange}
+                error={errors["password"]}
               />
             </div>
             <div className="mb-4">
-              <label className="form-label" htmlFor="newPassword">New Password:</label>
-              <input
-                className="form-input"
+              <Input
+                label="New Password"
                 type="password"
                 id="newPassword"
                 name="newPassword"
                 onChange={handlePasswordChange}
+                error={errors["newPassword"]}
               />
             </div>
             <div className="mb-4">
-              <label className="form-label" htmlFor="repeatPassword">Repeat New Password:</label>
-              <input
-                className="form-input"
+              <Input
+                label="Repeat New Password"
                 type="password"
                 id="repeatPassword"
                 name="repeatPassword"
                 onChange={handlePasswordChange}
+                error={errors["repeatPassword"]}
               />
             </div>
           </>
         }
+        {message && <p className="message mb-4">{message}</p>}
         {editingState !== EditingState.NONE &&
           <div className="flex items-center justify-left">
             <button className="form-button" onClick={handleSubmit}>Save</button>
@@ -215,7 +279,6 @@ function UserProfile() {
             }}>Cancel</button>
           </div>
         }
-        {message && <p className="message">{message}</p>}
       </div>
     </div>
   );
