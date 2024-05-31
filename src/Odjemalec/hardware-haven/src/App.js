@@ -7,6 +7,7 @@ import ItemDetail from './shop/ItemDetail';
 import Login from './components/Login';
 import Register from './components/Registration';
 import UserProfile from './components/UserProfile';
+import Basket from './shop/Basket';
 import axios from 'axios';
 
 function App() {
@@ -58,11 +59,12 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route index element={<Shop />} />
+            <Route index element={<Shop isAuthenticated={isAuthenticated} />} />
             <Route path="profile" element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />} />
             <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
             <Route path="item-detail/:id" element={<ItemDetail /> } />
+            <Route path="basket" element={isAuthenticated ? <Basket /> : <Navigate to="/login" />} />
           </Route>
         </Routes>
       </BrowserRouter>

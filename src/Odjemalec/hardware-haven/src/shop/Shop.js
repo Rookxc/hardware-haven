@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function Shop() {
+function Shop({ isAuthenticated }) {
   const [items, setItems] = useState([]);
   const navigate = useNavigate();
 
@@ -63,6 +63,18 @@ function Shop() {
     navigate(`/item-detail/${id}`);
   };
 
+  // TODO: api call - add to user DB collection (basket_items)
+  const displayBasket = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (isAuthenticated) {
+      navigate('/basket');
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <header className="bg-gray-800 p-4">
@@ -94,7 +106,7 @@ function Shop() {
                   <p className="text-sm pt-4 overflow-hidden overflow-ellipsis whitespace-nowrap h-12">{item.description}</p>
                   <p className="text-xl font-bold text-black mt-2 h-8">{item.price}</p>
                 </div>
-                <button className="bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-b-lg">
+                <button onClick={(e) => displayBasket(e)} className="bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-b-lg">
                   <span className="fas fa-shopping-cart mr-2"></span> Add to Basket
                 </button>
               </div>
