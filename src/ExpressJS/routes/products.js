@@ -6,10 +6,18 @@ var router = express.Router();
 router.get('/', async function (req, res, next) {
     try {
       const products = await Product.find();
+      
       if (products.length == 0) {
         res.status(404).json({ message: 'No products found' });
       } else {
-        res.status(200).json(products);
+        // return with average rating
+        const productsWithAvgRatings = products.map(product => {
+          return {
+              ...product.toObject(),
+              averageRating: product.getAverageRating()
+          };
+        });
+        res.status(200).json(productsWithAvgRatings);
       }
     } catch (error) {
       console.error(error);
@@ -22,7 +30,12 @@ router.get('/:id', async function (req, res, next) {
     try {
         const product = await Product.findById(req.params.id);
         if (product) {
-            res.status(200).json(product);
+          // return with average rating
+          const averageRating = product.getAverageRating();
+          res.status(200).json({ 
+              ...product.toObject(), 
+              averageRating 
+          });
         } else {
             res.status(404).json({ message: 'Product not found' });
         }

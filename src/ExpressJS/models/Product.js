@@ -49,7 +49,14 @@ const productSchema = new mongoose.Schema({
         default: []
     }
 });
+
+productSchema.methods.getAverageRating = function() {
+  const ratings = this.ratings;
+  if (ratings.length === 0) return 0;
+  const sum = ratings.reduce((acc, rating) => acc + rating.value, 0);
+  return sum / ratings.length;
+};
+
+const Product = mongoose.model('Product', productSchema);
   
-  const Product = mongoose.model('Product', productSchema);
-  
-  module.exports = Product;
+module.exports = Product;
