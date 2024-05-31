@@ -77,12 +77,6 @@ function Shop({ isAuthenticated }) {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="bg-gray-800 p-4">
-        <div className="relative w-full">
-          <input type="text" placeholder="Search..." className="w-full p-2 rounded-md pl-10" />
-          <i className="fas fa-search text-black ml-3 absolute top-1/2 transform -translate-y-1/2 left-0"></i>
-        </div>
-      </header>
       <div className="flex flex-1">
         <nav className="w-52 bg-gray-100 p-5 shadow-md">
           <ul className="space-y-2">
@@ -96,25 +90,31 @@ function Shop({ isAuthenticated }) {
             <li className="cursor-pointer hover:underline">Cases</li>
           </ul>
         </nav>
-        <main className="flex-1 p-5 flex flex-wrap gap-5 justify-start">
-          {items.length > 0 ? (
-            items.map(item => (
-              <div key={item.id} className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden w-56" onClick={() => displayItem(item.id)}>
-                <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="test_image" className="w-auto h-48 object-cover" />
-                <div className="p-4 flex flex-col flex-grow">
-                  <b className="text-lg font-bold leading-tight h-12">{item.name}</b>
-                  <p className="text-sm pt-4 overflow-hidden overflow-ellipsis whitespace-nowrap h-12">{item.description}</p>
-                  <p className="text-xl font-bold text-black mt-2 h-8">{item.price}</p>
+        <div className='flex flex-col'>
+          <div className="relative w-11/12 border-2 border-gray-500 rounded-md ml-6 mt-5">
+            <input type="text" placeholder="Search..." className="w-full p-2 rounded-md pl-10" />
+            <i className="fas fa-search text-black ml-3 absolute top-1/2 transform -translate-y-1/2 left-0"></i>
+          </div>
+          <main className="flex-1 p-5 flex flex-wrap gap-5 justify-start">
+            {items.length > 0 ? (
+              items.map(item => (
+                <div key={item.id} className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden w-56" onClick={() => displayItem(item.id)}>
+                  <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="test_image" className="w-auto h-48 object-cover" />
+                  <div className="p-4 flex flex-col flex-grow">
+                    <b className="text-lg font-bold leading-tight h-12">{item.name}</b>
+                    <p className="text-sm pt-4 overflow-hidden overflow-ellipsis whitespace-nowrap h-12">{item.description}</p>
+                    <p className="text-xl font-bold text-black mt-2 h-8">{item.price}</p>
+                  </div>
+                  <button onClick={(e) => displayBasket(e)} className="bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-b-lg">
+                    <span className="fas fa-shopping-cart mr-2"></span> Add to Basket
+                  </button>
                 </div>
-                <button onClick={(e) => displayBasket(e)} className="bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-b-lg">
-                  <span className="fas fa-shopping-cart mr-2"></span> Add to Basket
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>No items to display</p>
-          )}
-        </main>
+              ))
+            ) : (
+              <p>No items to display</p>
+            )}
+          </main>
+        </div>
       </div>
     </div>
   );
