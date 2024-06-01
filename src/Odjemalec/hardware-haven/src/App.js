@@ -23,7 +23,7 @@ function App() {
       const token = sessionStorage.getItem(TOKEN_KEY);
       if (token) {
         try {
-          await axiosInstance.get(`/api/auth/verify`);
+          await axiosInstance.get(`/auth/verify`);
           setIsAuthenticated(true);
         } catch (error) {
           sessionStorage.removeItem(TOKEN_KEY);

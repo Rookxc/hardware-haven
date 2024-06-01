@@ -4,14 +4,14 @@ import axiosInstance from '../helpers/AxiosInstance';
 function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [surname, setSurname] = useState(''); 
+  const [surname, setSurname] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post(`/api/auth/register`, {
+      const response = await axiosInstance.post(`/auth/register`, {
         name,
         email,
         surname,
@@ -28,8 +28,8 @@ function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div className="centered-container">
+      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8">
         <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

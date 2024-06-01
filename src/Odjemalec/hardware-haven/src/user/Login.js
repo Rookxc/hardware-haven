@@ -9,7 +9,7 @@ export function Logout() {
   useEffect(() => {
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(USER_ID_KEY);
-    
+
     if (window.location.pathname === '/') {
       window.location.reload();
     } else {
@@ -28,15 +28,15 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post(`/api/auth/login`, {
+      const response = await axiosInstance.post(`/auth/login`, {
         email,
         password
       });
-      
+
       const { token, _id } = response.data;
       sessionStorage.setItem(TOKEN_KEY, token);
       sessionStorage.setItem(USER_ID_KEY, _id);
-      
+
       setMessage('Login successful');
       //change this later
       setTimeout(() => {
@@ -48,8 +48,8 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div className="centered-container">
+      <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8">
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

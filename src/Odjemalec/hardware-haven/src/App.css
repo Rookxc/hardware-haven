@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --header-height: 96px;
+}
+
 header, .bg-theme {
   background-color: #0a3346;
 }
@@ -41,5 +45,6 @@ header, .bg-theme {
 }
 
 .centered-container {
-  @apply flex items-center justify-center min-h-screen bg-gray-100;
+  @apply flex items-center justify-center bg-gray-100;
+  min-height: calc(100vh - var(--header-height));
 }

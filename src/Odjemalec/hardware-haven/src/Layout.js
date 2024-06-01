@@ -1,16 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import './App.css';
-import { GiShoppingCart } from 'react-icons/gi';
-import { BsPerson } from 'react-icons/bs';
 import { FiLogOut } from "react-icons/fi";
+import useOnlineStatus from './helpers/OnlineStatus';
 
 function Layout({ isAuthenticated }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    const header = document.getElementsByTagName('header')[0];
+    const headerHeight = header.offsetHeight;
+    document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+  }, [useOnlineStatus()]);
+
   return (
     <div className="App">
       <header>
+        {!useOnlineStatus() &&
+          <p className="bg-amber-400 text-gray-800 p-1 text-center text-sm font-medium">
+            You are currently offline. Some functionalities may be disabled.
+          </p>
+        }
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
             <a href="/" className="-m-1.5 p-1.5">
