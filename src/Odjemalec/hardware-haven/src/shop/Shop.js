@@ -78,7 +78,8 @@ function Shop({ isAuthenticated }) {
             {items.length > 0 ? (
               items.map((item) => (
                 <div key={item._id} className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden w-56">
-                  <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="test_image" className="w-auto h-48 object-cover" onClick={() => displayItem(item._id)} />
+                  {/* <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="test_image" className="w-auto h-48 object-cover" onClick={() => displayItem(item._id)} /> */}
+                  <img src={item.image} alt="test_image" className="w-auto h-48 object-cover" onClick={() => displayItem(item._id)} />
                   <div className="p-4 flex flex-col flex-grow">
                     <b className="text-lg font-bold leading-tight h-12">{item.name}</b>
                     <p className="text-sm pt-4 overflow-hidden overflow-ellipsis whitespace-nowrap h-12">{item.description}</p>
