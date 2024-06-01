@@ -4,6 +4,7 @@ import { FiEdit2 } from "react-icons/fi";
 import validateEmail from '../helpers/Validator';
 import axiosInstance from '../helpers/AxiosInstance';
 import { USER_ID_KEY } from '../App';
+import sendPushNotification from '../helpers/PushNotification';
 
 const EditingState = {
   NONE: 'None',
@@ -56,9 +57,10 @@ function UserProfile() {
         valid = false;
       }
 
-      if (true) {
+      if (valid) {
         try {
           await axiosInstance.put(`/users/update-password/${user._id}`, editedPassword);
+
           setEditingState(EditingState.USER_DATA);
           setMessage('Password updated successfully.');
         } catch (error) {
@@ -97,12 +99,19 @@ function UserProfile() {
         valid = false;
       }
 
-      if (true) {
+      if (valid) {
         try {
-          await axiosInstance.put(`/users/${user._id}`, editedUser);
-          setUser(editedUser);
-          setEditingState(EditingState.NONE);
-          setMessage('Profile updated successfully.');
+          const response = await axiosInstance.put(`/users/${user._id}`, editedUser);
+          if (response.status === 200) {
+            console.log("Success");
+            sendPushNotification('User updated', 'User updated successfuly');
+            
+            setUser(editedUser);
+            setEditingState(EditingState.NONE);
+            setMessage('Profile updated successfully.');
+          } else {
+            setMessage('Profile update failed.');
+          }
         } catch (error) {
           if (error && error.response && error.response.data && error.response.data.errors && error.response.data.errors.length > 0) {
             error.response.data.errors.forEach(item => {

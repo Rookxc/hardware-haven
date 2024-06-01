@@ -9,6 +9,7 @@ function Layout({ isAuthenticated }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [basketItemCount, setBasketItemCount] = useState(0);
 
+  const isOnline = useOnlineStatus();
 
   useEffect(() => {
     const header = document.getElementsByTagName('header')[0];
@@ -16,12 +17,12 @@ function Layout({ isAuthenticated }) {
     document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
     const storedBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
     setBasketItemCount(storedBasketItems.length);
-  }, [useOnlineStatus()]);
+  }, [isOnline]);
 
   return (
     <div className="App">
       <header>
-        {!useOnlineStatus() &&
+        {!isOnline &&
           <p className="bg-amber-400 text-gray-800 p-1 text-center text-sm font-medium">
             You are currently offline. Some functionalities may be disabled.
           </p>
