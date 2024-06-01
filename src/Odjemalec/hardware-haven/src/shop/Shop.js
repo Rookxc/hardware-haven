@@ -87,9 +87,15 @@ function Shop({ isAuthenticated }) {
                       <div className="flex-grow text-center">{displayStock(item.stock)}</div>
                     </div>
                   </div>
-                  <button onClick={() => addToBasket(item._id)} className="bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-b-lg">
-                    <span className="fas fa-shopping-cart mr-2"></span> Add to Basket
-                  </button>
+                  {item.stock > 0 ? (
+                    <button onClick={() => addToBasket(item._id)} className="bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-b-lg">
+                      <span className="fas fa-shopping-cart mr-2"></span> Add to Basket
+                    </button>
+                  ) : (
+                    <button disabled className="bg-gray-400 text-white py-2 w-full flex items-center justify-center rounded-b-lg cursor-not-allowed">
+                      <span className="fas fa-shopping-cart mr-2"></span> Out of Stock
+                    </button>
+                  )}
                 </div>
               ))
             ) : (
