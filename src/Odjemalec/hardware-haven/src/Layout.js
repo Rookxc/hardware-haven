@@ -93,7 +93,7 @@ function Layout({ isAuthenticated }) {
                   <div className="py-6">
                     {isAuthenticated ?
                       <>
-                        <a href="/login" className="block -mx-3 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">
+                        <a href="/profile" className="block -mx-3 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">
                           Profile
                         </a>
                         <a href="/logout" className="flex items-center justify-start -mx-3 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10">
