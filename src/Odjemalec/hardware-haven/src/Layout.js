@@ -122,12 +122,9 @@ function Layout({ isAuthenticated }) {
 
       <Outlet />
 
-      {/* Basket button */}
       <div className={`fixed bottom-8 right-8`}>
         <a href="/basket" className="flex items-center justify-center bg-blue-500 text-white rounded-full w-12 h-12 hover:bg-blue-600 relative">
-          {/* Basket icon */}
           <FaShoppingBasket className="h-6 w-6" />
-          {/* Basket item count */}
           {basketItemCount > 0 && (
              <span className="bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1 ml-1 absolute top-7 right-7">{basketItemCount}</span>
           )}
