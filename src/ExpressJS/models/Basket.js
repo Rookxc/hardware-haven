@@ -24,7 +24,7 @@ const processedItemSchema = new mongoose.Schema({
   }
 });
 
-const basketSchema = new Schema({
+const basketSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

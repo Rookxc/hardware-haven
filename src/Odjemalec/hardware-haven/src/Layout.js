@@ -3,14 +3,19 @@ import { Outlet } from 'react-router-dom';
 import './App.css';
 import { FiLogOut } from "react-icons/fi";
 import useOnlineStatus from './helpers/OnlineStatus';
+import { FaShoppingBasket } from 'react-icons/fa';
 
 function Layout({ isAuthenticated }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [basketItemCount, setBasketItemCount] = useState(0);
+
 
   useEffect(() => {
     const header = document.getElementsByTagName('header')[0];
     const headerHeight = header.offsetHeight;
     document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+    const storedBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
+    setBasketItemCount(storedBasketItems.length);
   }, [useOnlineStatus()]);
 
   return (
@@ -116,6 +121,18 @@ function Layout({ isAuthenticated }) {
       </header>
 
       <Outlet />
+
+      {/* Basket button */}
+      <div className={`fixed bottom-8 right-8`}>
+        <a href="/basket" className="flex items-center justify-center bg-blue-500 text-white rounded-full w-12 h-12 hover:bg-blue-600 relative">
+          {/* Basket icon */}
+          <FaShoppingBasket className="h-6 w-6" />
+          {/* Basket item count */}
+          {basketItemCount > 0 && (
+             <span className="bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1 ml-1 absolute top-7 right-7">{basketItemCount}</span>
+          )}
+        </a>
+      </div>
     </div>
   );
 }

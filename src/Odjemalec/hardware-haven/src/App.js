@@ -10,6 +10,7 @@ import UserProfile from './user/UserProfile';
 import Basket from './shop/Basket';
 import axiosInstance from './helpers/AxiosInstance';
 import NotFound from './NotFound';
+import ThankYou from './shop/ThankYou';
 
 export const TOKEN_KEY = 'token';
 export const USER_ID_KEY = 'userId';
@@ -50,6 +51,7 @@ function App() {
             <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
             <Route path="item-detail/:id" element={<ItemDetail /> } />
             <Route path="basket" element={isAuthenticated ? <Basket /> : <Navigate to="/login" />} />
+            <Route path="/thank-you" element={<ThankYou />} />
             <Route path="logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />
           </Route>

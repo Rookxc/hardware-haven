@@ -21,6 +21,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth'); // Require the auth routes
 var productsRouter = require('./routes/products');
+var basketRouter = require('./routes/basket');
 
 var app = express();
 
@@ -40,6 +41,7 @@ app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
+app.use('/api/basket', basketRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
