@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../helpers/AxiosInstance';
 
 function CheckoutForm({ user }) {
     const navigate = useNavigate();
@@ -26,6 +27,9 @@ function CheckoutForm({ user }) {
     const errors = validateFormData(formData);
     if (Object.keys(errors).length === 0) {
       console.log(formData);
+      const basketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
+      const response = await axiosInstance.post('/products/checkout', {basketItems});
+  
       sessionStorage.removeItem('basketItems');
       await new Promise(resolve => setTimeout(resolve, 2000));
       navigate('/thank-you'); // Redirect to ThankYou page
