@@ -6,17 +6,18 @@ import useOnlineStatus from './helpers/OnlineStatus';
 
 function Layout({ isAuthenticated }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isOnline = useOnlineStatus();
 
   useEffect(() => {
     const header = document.getElementsByTagName('header')[0];
     const headerHeight = header.offsetHeight;
     document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
-  }, [useOnlineStatus()]);
+  }, [isOnline]);
 
   return (
     <div className="App">
       <header>
-        {!useOnlineStatus() &&
+        {!isOnline &&
           <p className="bg-amber-400 text-gray-800 p-1 text-center text-sm font-medium">
             You are currently offline. Some functionalities may be disabled.
           </p>
