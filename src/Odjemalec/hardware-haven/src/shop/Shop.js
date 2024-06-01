@@ -4,6 +4,7 @@ import axiosInstance from '../helpers/AxiosInstance';
 
 function Shop({ isAuthenticated }) {
   const [items, setItems] = useState([]);
+  const [clickedItems, setClickedItems] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,16 +30,13 @@ function Shop({ isAuthenticated }) {
       return;
     }
 
-    // Get existing basket items from session storage or initialize empty array
     const existingBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
-
-    // Add the new productId to the basket items array
     const updatedBasketItems = [...existingBasketItems, productId];
-
-    // Save the updated basket items array to session storage
     sessionStorage.setItem('basketItems', JSON.stringify(updatedBasketItems));
 
     console.log(`Adding product with ID ${productId} to the basket.`);
+
+    setClickedItems([...clickedItems, productId]);
   };
 
   const displayStock = (stock) => {
@@ -78,7 +76,6 @@ function Shop({ isAuthenticated }) {
             {items.length > 0 ? (
               items.map((item) => (
                 <div key={item._id} className="flex flex-col bg-white shadow-lg rounded-lg overflow-hidden w-56">
-                  {/* <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="test_image" className="w-auto h-48 object-cover" onClick={() => displayItem(item._id)} /> */}
                   <img src={item.image} alt="test_image" className="w-auto h-48 object-cover" onClick={() => displayItem(item._id)} />
                   <div className="p-4 flex flex-col flex-grow">
                     <b className="text-lg font-bold leading-tight h-12">{item.name}</b>
@@ -89,8 +86,14 @@ function Shop({ isAuthenticated }) {
                     </div>
                   </div>
                   {item.stock > 0 ? (
-                    <button onClick={() => addToBasket(item._id)} className="bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-b-lg">
-                      <span className="fas fa-shopping-cart mr-2"></span> Add to Basket
+                    <button
+                      onClick={() => addToBasket(item._id)}
+                      className={`py-2 w-full flex items-center justify-center rounded-b-lg ${
+                        clickedItems.includes(item._id) ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-700 text-white active:bg-green-500'
+                      }`}
+                    >
+                      {clickedItems.includes(item._id) ? <span className="fas fa-check-circle text-white mr-2"></span> : <span className="fas fa-shopping-cart text-white mr-2"></span>} 
+                      {clickedItems.includes(item._id) ? 'Add 1 more' : 'Add to Basket'}
                     </button>
                   ) : (
                     <button disabled className="bg-gray-400 text-white py-2 w-full flex items-center justify-center rounded-b-lg cursor-not-allowed">
