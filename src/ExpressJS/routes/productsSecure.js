@@ -31,7 +31,7 @@ router.put('/:id', async function (req, res, next) {
     try {
       const updatedProduct = await Product.findByIdAndUpdate(
         req.params.id,
-        { name, category, description, price, image, brand, manufacturer, model, stock, ratings, reviews },
+        { name, category, description, price, image, brand, stock, ratings },
         { new: true }  // This option returns the updated document
       );
       if (updatedProduct) {
