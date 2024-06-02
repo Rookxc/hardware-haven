@@ -145,15 +145,21 @@ function ItemDetail({ isAuthenticated }) {
               </p>
             </div>
             <p className="mt-4">{product.description}</p>
-            <button 
-              onClick={() => addToBasket(product._id)}
-              className={`mt-4 bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-lg ${
-                clickedItems.includes(product._id) ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-700 text-white active:bg-green-500'
-              }`}
-            >
+            {product.stock > 0 ? (
+              <button 
+                onClick={() => addToBasket(product._id)}
+                className={`mt-4 bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-lg ${
+                  clickedItems.includes(product._id) ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-700 text-white active:bg-green-500'
+                }`}
+              >
               {clickedItems.includes(product._id) ? <FaCheckCircle className="text-white mr-2" /> : <FaShoppingCart className="text-white mr-2" />} 
               {clickedItems.includes(product._id) ? 'Add 1 more' : 'Add to Basket'}
             </button>
+            ) : (
+              <button disabled className="mt-4 bg-gray-400 text-white py-2 w-full flex items-center justify-center rounded-lg cursor-not-allowed">
+                <FaShoppingCart className="mr-2" /> Out of Stock
+              </button>
+            )}
           </div>
         </div>
       </div>
