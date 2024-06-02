@@ -2,27 +2,32 @@ var express = require('express');
 const Product = require('../models/Product');
 var router = express.Router();
 
-// Get all products
 router.get('/', async function (req, res, next) {
-    try {
-      const products = await Product.find();
-      
-      if (products.length == 0) {
-        res.status(404).json({ message: 'No products found' });
-      } else {
-        // return with average rating
-        const productsWithAvgRatings = products.map(product => {
-          return {
-              ...product.toObject(),
-              averageRating: product.getAverageRating()
-          };
-        });
-        res.status(200).json(productsWithAvgRatings);
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error' });
+  const { category } = req.query;
+
+  let query = {};
+  if (category) {
+    query.category = { $regex: category.replace(/\.$/, ''), $options: 'i' };
+  }
+
+  try {
+    const products = await Product.find(query);
+
+    if (products.length === 0) {
+      res.status(404).json({ message: 'No products found' });
+    } else {
+      const productsWithAvgRatings = products.map(product => {
+        return {
+          ...product.toObject(),
+          averageRating: product.getAverageRating()
+        };
+      });
+      res.status(200).json(productsWithAvgRatings);
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 // Get product by ID

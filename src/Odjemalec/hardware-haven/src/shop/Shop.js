@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../helpers/AxiosInstance';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faShoppingCart, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import annyang from 'annyang';
 
 function Shop({ isAuthenticated }) {
   const [items, setItems] = useState([]);
@@ -35,6 +36,22 @@ function Shop({ isAuthenticated }) {
 
   useEffect(() => {
     fetchAllProducts();
+    if (annyang) {
+      console.log("HELLOO")
+      const commands = {
+        'filter :category': filterItems,
+        'filter by :category': filterItems,
+        'filter by category :category': filterItems,
+        'show category :category': filterItems,
+        'show me :category': filterItems,
+        'display :category': filterItems,
+        'view :category': filterItems,
+        'search :category': filterItems
+      };
+
+      annyang.addCommands(commands);
+      annyang.start();
+    }
   }, []);
 
   const handleCategoryChange = (category) => {
@@ -86,17 +103,26 @@ function Shop({ isAuthenticated }) {
     }
   };
 
+  const filterItems = async (category) => {
+    try {
+      const response = await axiosInstance.get(`/products?category=${category}`);
+      setItems(response.data);
+    } catch (error) {
+      console.error('Error filtering products:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <div className="flex flex-1">
         <nav className="w-52 bg-gray-100 p-6 shadow-md">
-        <div className="mb-4">
-          <b className="text-xl mb-3">Filters</b>
-        </div>
-        <div className="mb-2">
-          <b>Categories</b>
-        </div>
-        <ul className="space-y-2 mx-3">
+          <div className="mb-4">
+            <b className="text-xl mb-3">Filters</b>
+          </div>
+          <div className="mb-2">
+            <b>Categories</b>
+          </div>
+          <ul className="space-y-2 mx-3">
             {['GPU', 'CPU', 'Motherboard', 'RAM', 'Storage Device', 'Power Supply', 'Case'].map((category) => (
               <li key={category}>
                 <span
@@ -148,7 +174,7 @@ function Shop({ isAuthenticated }) {
           </div>
         </nav>
         <div className="flex flex-col w-full">
-        <div className="relative w-11/12 border-2 border-gray-500 rounded-md ml-6 mt-5">
+          <div className="relative w-11/12 border-2 border-gray-500 rounded-md ml-6 mt-5">
             <input
               type="text"
               placeholder="Search..."
