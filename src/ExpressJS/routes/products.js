@@ -117,6 +117,40 @@ router.put('/:id', async function (req, res, next) {
     }
 });
 
+// Update ratings
+router.put('/ratings/:itemId/:userId', async function (req, res, next) {
+  const { itemId, userId } = req.params;
+  const { rating } = req.body;
+
+  try {
+    // Find the product by ID
+    const product = await Product.findById(itemId);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Check if the user has already rated the product
+    const existingRatingIndex = product.ratings.findIndex(r => r.userId.toString() === userId);
+
+    if (existingRatingIndex >= 0) {
+      // Update existing rating
+      product.ratings[existingRatingIndex].value = rating;
+    } else {
+      // Add new rating
+      product.ratings.push({ userId, value: rating });
+    }
+
+    // Save the updated product
+    const updatedProduct = await product.save();
+
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Delete product
 router.delete('/:id', async function (req, res, next) {
     try {

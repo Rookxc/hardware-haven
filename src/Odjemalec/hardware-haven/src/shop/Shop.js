@@ -11,26 +11,15 @@ function Shop({ isAuthenticated }) {
 
   const fetchAllProducts = async () => {
     try {
-        const response = await axiosInstance.get(`/products/`);
-        if(response.data.length !== 0){
-          setItems(response.data);
-          localStorage.setItem('products', JSON.stringify(response.data));
-        }
+      const response = await axiosInstance.get('/products');
+      setItems(response.data);
     } catch (error) {
-        console.error('Error fetching products', error);
+      console.error('Error fetching products:', error);
     }
   };
 
   useEffect(() => {
-    const cachedItems = localStorage.getItem('products');
-    if (cachedItems) {
-      setItems(JSON.parse(cachedItems));
-    } else {
-      fetchAllProducts();
-    } 
-    const intervalId = setInterval(fetchAllProducts, 3600000); // Update every hour
-
-    return () => clearInterval(intervalId); // Clean up interval on component unmount
+    fetchAllProducts();
   }, []);
 
   const displayItem = (id, productData) => {
