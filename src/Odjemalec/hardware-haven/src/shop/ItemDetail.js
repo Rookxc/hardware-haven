@@ -8,15 +8,17 @@ import { useNavigate } from 'react-router-dom';
 import { USER_ID_KEY } from '../App';
 
 function ItemDetail({ isAuthenticated }) {
-  const location = useLocation();
-  const { product } = location.state || {};
-  const navigate = useNavigate();
-
   const [hoveredRating, setHoveredRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { product } = location.state || {};
   const userId = sessionStorage.getItem(USER_ID_KEY); // Get the user ID from session storage
+
 
   const fetchUserRating = async () => {
     if (product && userId) {
@@ -142,7 +144,7 @@ function ItemDetail({ isAuthenticated }) {
           ))}
         </div>
         {selectedRating > 0 && isClicked && (
-          <button onClick={confirmRating} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg disabled:bg-gray-400" disabled={isDisabled}>
+          <button onClick={confirmRating} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed" disabled={isDisabled}>
             Confirm Rating
           </button>
         )}

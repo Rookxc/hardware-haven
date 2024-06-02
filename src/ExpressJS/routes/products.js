@@ -45,27 +45,38 @@ router.get('/:id', async function (req, res, next) {
     }
 });
 
-// Get all products by query
-router.get('/search', async function (req, res, next) {
-  const { name, minPrice, maxPrice, categories } = req.query;
+// Find all products by query
+router.post('/search', async function (req, res, next) {
+  const { name, minPrice, maxPrice, categories, sortOrder } = req.body;
   let query = {};
 
   if (name) {
     query.name = { $regex: name, $options: 'i' }; // Case-insensitive regex search
   }
-
+  
   if (minPrice || maxPrice) {
     query.price = {};
     if (minPrice) query.price.$gte = parseFloat(minPrice);
     if (maxPrice) query.price.$lte = parseFloat(maxPrice);
   }
 
-  if (categories) {
-    query.category = { $in: categories.split(',') }; // Split categories by comma
+  if (categories && categories.length > 0) {
+    query.category = { $in: categories };
+  }
+  
+  let sortOptions = {};
+  if (sortOrder === 'asc') {
+    sortOptions = { price: 1 }; // Sort by price ascending
+  } else if (sortOrder === 'desc') {
+    sortOptions = { price: -1 }; // Sort by price descending
+  } else if (sortOrder === 'stock-high') {
+    sortOptions = { stock: -1 }; // Sort by highest stock number
+  } else if (sortOrder === 'stock-low') {
+    sortOptions = { stock: 1 }; // Sort by lowest stock number
   }
 
   try {
-    const products = await Product.find(query);
+    const products = await Product.find(query).sort(sortOptions);
     res.status(200).json(products);
   } catch (error) {
     console.error(error);
