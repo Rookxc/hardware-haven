@@ -13,12 +13,33 @@ webpush.setVapidDetails(
     vapidKeys.privateKey
 );
 
-const subscriptions = [];
+router.post('/subscribe', async (req, res) => {
+    const userId = req.userId;
+    const subscriptionData = req.body;
 
-router.post('/subscribe', (req, res) => {
-    const subscription = req.body;
-    subscriptions.push(subscription);
-    res.status(200).json({ message: 'Subscription successful' });
+    console.log(subscriptionData)
+
+    try {
+        if (!subscriptionData.userId) {
+            return res.status(400).json({ message: 'User id is missing' });
+        }
+
+        const newSubscription = new PushSubscription({
+            user: subscriptionData.userId,
+            endpoint: subscriptionData.endpoint,
+            keys: {
+                p256dh: subscriptionData.keys.p256dh,
+                auth: subscriptionData.keys.auth,
+            },
+            expirationTime: subscriptionData.expirationTime || null,
+        });
+
+        await newSubscription.save();
+
+        return res.status(200).json({ message: 'Subscription successful' });
+    } catch (error) {
+        return res.status(500).json({ message: 'Subscription failed', error: error.message });
+    }
 });
 
 router.post('/send-push-notification', (req, res) => {

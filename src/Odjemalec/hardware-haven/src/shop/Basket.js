@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../helpers/AxiosInstance';
 import CheckoutForm from '../components/CheckoutForm';
-import { USER_ID_KEY } from '../App';
 
 function Basket() {
   const [basketItems, setBasketItems] = useState([]);
@@ -49,18 +48,16 @@ function Basket() {
       try {
         const fetchUserData = async () => {
           try {
-            const response = await axiosInstance.get(`/users/${sessionStorage.getItem(USER_ID_KEY)}`);
+            const response = await axiosInstance.get(`/user`);
             setUser(response.data);
             console.log("🚀 ~ fetchUserData ~ response.data:", response.data)
           } catch (error) {
             // setLoadingError('Error fetching user data');
           }
-            
         };
     
         fetchUserData();
       } catch(error){
-
       }
     }
 

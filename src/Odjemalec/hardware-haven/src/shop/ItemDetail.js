@@ -79,11 +79,12 @@ function ItemDetail({ isAuthenticated }) {
 
   const confirmRating = async () => {
     try {
-      if (!userId) {
+      if (!isAuthenticated) {
         navigate('/login');
         return;
       }
-      const response = await axiosInstance.put(`/products/ratings/${product._id}/${userId}`, { rating: selectedRating });
+
+      const response = await axiosInstance.put(`/products/secure/ratings/${product._id}`, { rating: selectedRating });
       console.log('Rating confirmed:', response.data);
       // Disable confirm button
       setIsDisabled(true);
@@ -144,7 +145,7 @@ function ItemDetail({ isAuthenticated }) {
           ))}
         </div>
         {selectedRating > 0 && isClicked && (
-          <button onClick={confirmRating} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed" disabled={isDisabled}>
+          <button onClick={confirmRating} className="mt-4 mb-4 bg-blue-500 text-white py-2 px-4 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed" disabled={isDisabled}>
             Confirm Rating
           </button>
         )}

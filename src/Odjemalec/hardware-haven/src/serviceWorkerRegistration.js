@@ -20,29 +20,54 @@ const isLocalhost = Boolean(
   window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
 );
 
-async function subscribeToPushNotifications(serviceWorker) {
+export async function subscribeToPushNotifications(userId) {
   const permission = await Notification.requestPermission();
 
-  if (permission === 'granted') {
-    const subscription = await serviceWorker.pushManager.subscribe({
+  if (permission === 'granted' && userId) {
+    const registration = await navigator.serviceWorker.ready;
+    let subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(process.env.REACT_APP_PUSH_API_KEY),
     });
 
-    sendSubscriptionToServer(subscription);
+    sendSubscriptionToServer(subscription, userId);
   }
 }
 
-function sendSubscriptionToServer(subscription) {
-  axiosInstance.post('push-notifications/subscribe', subscription)
-    .then(response => {
-      if (response.status !== 200) {
-        console.error('Failed to subscribe: ', response.message, response.error);
-      }
-    })
-    .catch(error => {
-      console.error('Error subscribing user:', error);
-    });
+export async function unsubscribeFromPushNotifications(userId) {
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+
+    if (subscription) {
+      await subscription.unsubscribe();
+      await sendUnsubscriptionToServer(subscription.endpoint, userId);
+    }
+  } catch (error) {
+    console.error('Error during unsubscription:', error);
+  }
+}
+
+async function sendSubscriptionToServer(subscription, userId) {
+  try {
+    const response = axiosInstance.post(`push-notifications/subscribe/${userId}`, subscription)
+    if (response.status !== 200) {
+      console.error('Failed to subscribe:', response.message, response.error);
+    }
+  } catch (error) {
+    console.error('Error subscribing user:', error);
+  }
+}
+
+async function sendUnsubscriptionToServer(endpoint, userId) {
+  try {
+    const response = await axiosInstance.post('push-notifications/unsubscribe', { endpoint, userId });
+    if (response.status !== 200) {
+      console.error('Failed to unsubscribe:', response.message, response.error);
+    }
+  } catch (error) {
+    console.error('Error unsubscribing user:', error);
+  }
 }
 
 export function register(config) {
@@ -116,9 +141,7 @@ function registerValidSW(swUrl, config) {
             }
           }
         };
-      };
-
-      subscribeToPushNotifications(registration);
+      }
     })
     .catch((error) => {
       console.error('Error during service worker registration:', error);

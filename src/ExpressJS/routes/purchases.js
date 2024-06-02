@@ -4,8 +4,8 @@ const Basket = require('../models/Basket');
 var router = express.Router();
 
 // Create a purchase from the basket
-router.post('/:id', async (req, res) => {
-    const userId = req.params.id;
+router.post('/', async (req, res) => {
+    const userId = req.userId;
 
     try {
         // Find user's basket
@@ -47,7 +47,7 @@ router.post('/:id', async (req, res) => {
 
 // Get all purchases for the logged-in user
 router.get('/', async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.userId;
 
     try {
         const userPurchases = await Purchase.findOne({ userId });

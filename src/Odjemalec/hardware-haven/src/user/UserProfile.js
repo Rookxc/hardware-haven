@@ -3,8 +3,9 @@ import Input from '../components/Input';
 import { FiEdit2 } from "react-icons/fi";
 import validateEmail from '../helpers/Validator';
 import axiosInstance from '../helpers/AxiosInstance';
-import { USER_ID_KEY } from '../App';
 import sendPushNotification from '../helpers/PushNotification';
+import Checkbox from '../components/Checkbox';
+import { subscribeToPushNotifications, unsubscribeFromPushNotifications } from '../serviceWorkerRegistration';
 
 const EditingState = {
   NONE: 'None',
@@ -25,7 +26,7 @@ function UserProfile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axiosInstance.get(`/users/${sessionStorage.getItem(USER_ID_KEY)}`);
+        const response = await axiosInstance.get(`/user`);
         setUser(response.data);
         setEditedUser(response.data);
         setLoading(false);
@@ -59,7 +60,7 @@ function UserProfile() {
 
       if (valid) {
         try {
-          await axiosInstance.put(`/users/update-password/${user._id}`, editedPassword);
+          await axiosInstance.put(`/user/update-password`, editedPassword);
 
           setEditingState(EditingState.USER_DATA);
           setMessage('Password updated successfully.');
@@ -100,12 +101,18 @@ function UserProfile() {
       }
 
       if (valid) {
+        if (editedUser.pushNotifications) {
+          subscribeToPushNotifications(user._id);
+        } else {
+          unsubscribeFromPushNotifications(user._id);
+        }
+
         try {
-          const response = await axiosInstance.put(`/users/${user._id}`, editedUser);
+          const response = await axiosInstance.put(`/user`, editedUser);
           if (response.status === 200) {
             console.log("Success");
             sendPushNotification('User updated', 'User updated successfuly');
-            
+
             setUser(editedUser);
             setEditingState(EditingState.NONE);
             setMessage('Profile updated successfully.');
@@ -140,13 +147,13 @@ function UserProfile() {
   };
 
   const handleUserDataChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, checked, type } = e.target;
 
     setErrorChange(name, false);
 
     setEditedUser((prevUser) => ({
       ...prevUser,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -228,6 +235,16 @@ function UserProfile() {
               ) : (
                 <div className="form-input">{user.email}</div>
               )}
+            </div>
+            <div className="mb-4">
+              <Checkbox
+                label="Push Notifications"
+                id="pushNotifications"
+                name="pushNotifications"
+                checked={editingState === EditingState.USER_DATA ? editedUser.pushNotifications : user.pushNotifications}
+                onChange={handleUserDataChange}
+                disabled={editingState !== EditingState.USER_DATA}
+              />
             </div>
           </>
         }
