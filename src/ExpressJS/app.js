@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGODB_CONN, {
   .catch(err => console.error('MongoDB connection error:', err));
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/user');
+var userRouter = require('./routes/user');
 var authRouter = require('./routes/auth');
 var productsRouter = require('./routes/products');
 var productsSecureRouter = require('./routes/productsSecure');
@@ -78,7 +78,7 @@ app.all('*', async (req, res, next) => {
 });
 
 app.use('/', indexRouter);
-app.use('/api/user', usersRouter);
+app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/products/secure', productsSecureRouter);

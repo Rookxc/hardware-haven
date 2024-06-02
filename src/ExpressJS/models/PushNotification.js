@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const pushSubscriptionSchema = new mongoose.Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -9,6 +9,7 @@ const pushSubscriptionSchema = new mongoose.Schema({
   endpoint: {
     type: String,
     required: true,
+    unique: true
   },
   keys: {
     p256dh: {

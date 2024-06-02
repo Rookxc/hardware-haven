@@ -101,10 +101,10 @@ function UserProfile() {
       }
 
       if (valid) {
-        if (editedUser.pushNotifications) {
-          subscribeToPushNotifications(user._id);
+        if (editedUser.pushNofitications) {
+          subscribeToPushNotifications();
         } else {
-          unsubscribeFromPushNotifications(user._id);
+          unsubscribeFromPushNotifications();
         }
 
         try {
@@ -241,7 +241,7 @@ function UserProfile() {
                 label="Push Notifications"
                 id="pushNotifications"
                 name="pushNotifications"
-                checked={editingState === EditingState.USER_DATA ? editedUser.pushNotifications : user.pushNotifications}
+                checked={editingState === EditingState.USER_DATA ? editedUser.pushNofitications : user.pushNofitications}
                 onChange={handleUserDataChange}
                 disabled={editingState !== EditingState.USER_DATA}
               />

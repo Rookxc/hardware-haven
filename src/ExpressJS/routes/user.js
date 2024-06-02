@@ -13,7 +13,8 @@ router.get('/', async function (req, res, next) {
       _id: user._id,
       name: user.name,
       surname: user.surname,
-      email: user.email
+      email: user.email,
+      pushNofitications: user.pushNofitications
     });
   } catch (error) {
     console.error(error);

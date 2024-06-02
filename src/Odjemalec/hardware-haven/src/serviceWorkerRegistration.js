@@ -1,6 +1,7 @@
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
+import { TOKEN_KEY } from "./App";
 import axiosInstance from "./helpers/AxiosInstance";
 
 // This lets the app load faster on subsequent visits in production, and gives
@@ -20,37 +21,37 @@ const isLocalhost = Boolean(
   window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
 );
 
-export async function subscribeToPushNotifications(userId) {
+export async function subscribeToPushNotifications() {
   const permission = await Notification.requestPermission();
 
-  if (permission === 'granted' && userId) {
+  if (permission === 'granted' && sessionStorage.getItem(TOKEN_KEY)) {
     const registration = await navigator.serviceWorker.ready;
     let subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(process.env.REACT_APP_PUSH_API_KEY),
     });
 
-    sendSubscriptionToServer(subscription, userId);
+    sendSubscriptionToServer(subscription);
   }
 }
 
-export async function unsubscribeFromPushNotifications(userId) {
+export async function unsubscribeFromPushNotifications() {
   try {
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.getSubscription();
 
-    if (subscription) {
+    if (subscription && sessionStorage.getItem(TOKEN_KEY)) {
       await subscription.unsubscribe();
-      await sendUnsubscriptionToServer(subscription.endpoint, userId);
+      await sendUnsubscriptionToServer();
     }
   } catch (error) {
     console.error('Error during unsubscription:', error);
   }
 }
 
-async function sendSubscriptionToServer(subscription, userId) {
+async function sendSubscriptionToServer(subscription) {
   try {
-    const response = axiosInstance.post(`push-notifications/subscribe/${userId}`, subscription)
+    const response = axiosInstance.post(`push-notifications/subscribe`, subscription)
     if (response.status !== 200) {
       console.error('Failed to subscribe:', response.message, response.error);
     }
@@ -59,9 +60,9 @@ async function sendSubscriptionToServer(subscription, userId) {
   }
 }
 
-async function sendUnsubscriptionToServer(endpoint, userId) {
+async function sendUnsubscriptionToServer() {
   try {
-    const response = await axiosInstance.post('push-notifications/unsubscribe', { endpoint, userId });
+    const response = await axiosInstance.post('push-notifications/unsubscribe');
     if (response.status !== 200) {
       console.error('Failed to unsubscribe:', response.message, response.error);
     }

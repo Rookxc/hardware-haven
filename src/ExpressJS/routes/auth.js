@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const { generateToken, verifyToken } = require('../helpers/Authentication');
+const sendPushNotification = require('../helpers/PushNotification');
 
 router.post('/register', async (req, res) => {
   const { name, email, surname, password } = req.body;
@@ -24,7 +25,7 @@ router.post('/register', async (req, res) => {
       name: user.name,
       email: user.email,
       surname: user.surname,
-      token: generateToken(user._id),
+      token: generateToken(user._id)
     });
   } catch (error) {
     console.error(error);
@@ -44,6 +45,7 @@ router.post('/login', async (req, res) => {
         name: user.name,
         email: user.email,
         token: generateToken(user._id),
+        pushNofitications: user.pushNofitications
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
