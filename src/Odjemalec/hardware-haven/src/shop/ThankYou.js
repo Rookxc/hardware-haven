@@ -15,7 +15,7 @@ function ThankYou() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="centered-container">
       <div className="container bg-white shadow-md rounded px-8 pt-6 pb-8">
         <h1 className="text-3xl font-bold mb-8 text-center">Thank You!</h1>
         <p className="text-lg text-center">Your purchase was successful.</p>

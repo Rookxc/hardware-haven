@@ -27,7 +27,9 @@
     "workbox-range-requests": "^6.6.0",
     "workbox-routing": "^6.6.0",
     "workbox-strategies": "^6.6.0",
-    "workbox-streams": "^6.6.0"
+    "workbox-streams": "^6.6.0",
+    "react-confetti": "^6.1.0",
+    "react-hook-form": "^7.51.5"
   },
   "scripts": {
     "start": "react-scripts start",

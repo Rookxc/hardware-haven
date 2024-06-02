@@ -11,7 +11,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post(`/auth/register`, {
+      await axiosInstance.post(`/auth/register`, {
         name,
         email,
         surname,

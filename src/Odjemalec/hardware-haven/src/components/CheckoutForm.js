@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../helpers/AxiosInstance';
+import Input from './Input';
 
 function CheckoutForm({ user }) {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: user.name || '',
     surname: user.surname || '',
@@ -16,20 +17,26 @@ function CheckoutForm({ user }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    setErrors({
+      ...errors,
+      [name]: false
+    });
+
     setFormData({
       ...formData,
       [name]: value,
     });
   };
 
-  const handleSubmit = async  (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateFormData(formData);
     if (Object.keys(errors).length === 0) {
       console.log(formData);
       const basketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
-      const response = await axiosInstance.post('/products/checkout', {basketItems});
-  
+      await axiosInstance.post('/products/checkout', { basketItems });
+
       sessionStorage.removeItem('basketItems');
       await new Promise(resolve => setTimeout(resolve, 2000));
       navigate('/thank-you'); // Redirect to ThankYou page
@@ -81,37 +88,73 @@ function CheckoutForm({ user }) {
   return (
     <form onSubmit={handleSubmit} className="mt-8">
       <div className="mb-4">
-        <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name</label>
-        <input name="name" value={formData.name} onChange={handleChange} id="name" type="text" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-        {errors.name && <span className="text-red-500">{errors.name}</span>}
+        <Input
+          label="Name"
+          id="name"
+          name="name"
+          type="text"
+          value={formData.name}
+          onChange={handleChange}
+          error={errors.name}
+        />
       </div>
       <div className="mb-4">
-        <label htmlFor="surname" className="block text-gray-700 text-sm font-bold mb-2">Surname</label>
-        <input name="surname" value={formData.surname} onChange={handleChange} id="surname" type="text" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-        {errors.surname && <span className="text-red-500">{errors.surname}</span>}
+        <Input
+          label="Surname"
+          id="surname"
+          name="surname"
+          type="text"
+          value={formData.surname}
+          onChange={handleChange}
+          error={errors.surname}
+        />
       </div>
       <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-        <input name="email" value={formData.email} onChange={handleChange} id="email" type="email" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-        {errors.email && <span className="text-red-500">{errors.email}</span>}
+        <Input
+          label="Email"
+          id="email"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          error={errors.email}
+        />
       </div>
       <div className="mb-4">
-        <label htmlFor="address" className="block text-gray-700 text-sm font-bold mb-2">Address</label>
-        <input name="address" value={formData.address} onChange={handleChange} id="address" type="text" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-        {errors.address && <span className="text-red-500">{errors.address}</span>}
+        <Input
+          label="Address"
+          id="address"
+          name="address"
+          type="text"
+          value={formData.address}
+          onChange={handleChange}
+          error={errors.address}
+        />
       </div>
       <div className="mb-4">
-        <label htmlFor="city" className="block text-gray-700 text-sm font-bold mb-2">City</label>
-        <input name="city" value={formData.city} onChange={handleChange} id="city" type="text" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-        {errors.city && <span className="text-red-500">{errors.city}</span>}
+        <Input
+          label="City"
+          id="city"
+          name="city"
+          type="text"
+          value={formData.city}
+          onChange={handleChange}
+          error={errors.city}
+        />
       </div>
       <div className="mb-4">
-        <label htmlFor="zipcode" className="block text-gray-700 text-sm font-bold mb-2">Zipcode</label>
-        <input name="zipcode" value={formData.zipcode} onChange={handleChange} id="zipcode" type="text" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-        {errors.zipcode && <span className="text-red-500">{errors.zipcode}</span>}
+        <Input
+          label="Zipcode"
+          id="zipcode"
+          name="zipcode"
+          type="text"
+          value={formData.zipcode}
+          onChange={handleChange}
+          error={errors.zipcode}
+        />
       </div>
       <div className="flex justify-center">
-        <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Purchase</button>
+        <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">Purchase</button>
       </div>
     </form>
   );
