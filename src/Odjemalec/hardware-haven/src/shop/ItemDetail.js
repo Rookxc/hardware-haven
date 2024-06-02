@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar as faSolidStar } from '@fortawesome/free-solid-svg-icons';
-import { faStar as faRegularStar } from '@fortawesome/free-regular-svg-icons';
-import { faShoppingCart, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { FaStar as FaSolidStar, FaShoppingCart, FaCheckCircle } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import axiosInstance from '../helpers/AxiosInstance';
 import { useNavigate } from 'react-router-dom';
@@ -73,12 +70,12 @@ function ItemDetail({ isAuthenticated }) {
   };
 
   const renderStars = (rating) => {
+    console.log(rating)
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <FontAwesomeIcon 
+        <FaSolidStar 
           key={i}
-          icon={i <= rating ? faSolidStar : faRegularStar} 
           className={i <= rating ? 'text-yellow-500' : 'text-gray-300'}
         />
       );
@@ -121,9 +118,11 @@ function ItemDetail({ isAuthenticated }) {
     <div>
       <h1 className="text-2xl text-center font-bold mt-8 mb-4">{product.name}</h1>
       {product.ratings.length > 0 ? (
-        <div className="grid grid-rows-1">
-          <p className="text-center">{renderStars(product.averageRating)} ({product.ratings.length})</p>
-        </div>
+        <div className="flex justify-center items-center">
+          {renderStars(product.averageRating)}
+          <span className="px-2">{product.averageRating}</span>
+          <span>({product.ratings.length})</span>
+      </div>
       ) : (
         ''
       )}
@@ -152,7 +151,7 @@ function ItemDetail({ isAuthenticated }) {
                 clickedItems.includes(product._id) ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-700 text-white active:bg-green-500'
               }`}
             >
-              {clickedItems.includes(product._id) ? <FontAwesomeIcon icon={faCheckCircle} className="text-white mr-2" /> : <FontAwesomeIcon icon={faShoppingCart} className="text-white mr-2" />} 
+              {clickedItems.includes(product._id) ? <FaCheckCircle className="text-white mr-2" /> : <FaShoppingCart className="text-white mr-2" />} 
               {clickedItems.includes(product._id) ? 'Add 1 more' : 'Add to Basket'}
             </button>
           </div>
@@ -162,10 +161,9 @@ function ItemDetail({ isAuthenticated }) {
         <h2 className="text-xl font-bold mb-4">Rate this product</h2>
         <div className="flex">
           {[1, 2, 3, 4, 5].map((rating) => (
-            <FontAwesomeIcon
+            <FaSolidStar
               key={rating}
-              icon={rating <= (hoveredRating || selectedRating) ? faSolidStar : faRegularStar}
-              className="text-yellow-500 cursor-pointer"
+              className={`cursor-pointer ${rating <= (hoveredRating || selectedRating) ? 'text-yellow-500' : 'text-gray-300'}`}
               onMouseEnter={() => handleMouseEnter(rating)}
               onMouseLeave={handleMouseLeave}
               onClick={() => handleRatingClick(rating)}

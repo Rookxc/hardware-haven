@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../helpers/AxiosInstance';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faShoppingCart, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { FaShoppingCart, FaCheckCircle, FaSearch } from 'react-icons/fa';
 import annyang from 'annyang';
 
 function Shop({ isAuthenticated }) {
@@ -211,8 +210,7 @@ function Shop({ isAuthenticated }) {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full p-2 rounded-md pl-10"
             />
-            <FontAwesomeIcon
-              icon={faSearch}
+            <FaSearch
               className="text-black ml-3 absolute top-1/2 transform -translate-y-1/2 left-0 cursor-pointer"
               onClick={handleSearch}
             />
@@ -237,12 +235,12 @@ function Shop({ isAuthenticated }) {
                         clickedItems.includes(item._id) ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-700 text-white active:bg-green-500'
                       }`}
                     >
-                      {clickedItems.includes(item._id) ? <FontAwesomeIcon icon={faCheckCircle} className="text-white mr-2" /> : <FontAwesomeIcon icon={faShoppingCart} className="text-white mr-2" />} 
+                      {clickedItems.includes(item._id) ? <FaCheckCircle className="text-white mr-2" /> : <FaShoppingCart className="text-white mr-2" />} 
                       {clickedItems.includes(item._id) ? 'Add 1 more' : 'Add to Basket'}
                     </button>
                   ) : (
                     <button disabled className="bg-gray-400 text-white py-2 w-full flex items-center justify-center rounded-b-lg cursor-not-allowed">
-                      <FontAwesomeIcon icon={faShoppingCart} className="mr-2" /> Out of Stock
+                      <FaShoppingCart className="mr-2" /> Out of Stock
                     </button>
                   )}
                 </div>
