@@ -1,68 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../helpers/AxiosInstance';
 import CheckoutForm from '../components/CheckoutForm';
+import { useNavigate } from 'react-router-dom';
 
-function Basket() {
-  const [basketItems, setBasketItems] = useState([]);
+function Basket({ isAuthenticated }) {
+  const [basketItems, setBasketItems] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPrice, setTotalPrice] = useState(0);
   const [user, setUser] = useState({});
+
+  const navigate = useNavigate();
+
   useEffect(() => {
-    // Fetch basket items from session storage
-    const storedBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
-    setBasketItems(storedBasketItems);
-    setLoading(false);
-
-    // Fetch product details for each item in the basket
-    async function fetchProducts() {
-      try {
-        const productPromises = storedBasketItems.map(async (productId) => {
-          const response = await axiosInstance.get(`/products/${productId}`);
-          return response.data;
-        });
-        const productsData = await Promise.all(productPromises);
-
-        // Aggregate quantities for the same product
-        const aggregatedProducts = [];
-        productsData.forEach((product) => {
-          const existingProduct = aggregatedProducts.find((p) => p._id === product._id);
-          if (existingProduct) {
-            existingProduct.quantity++;
-          } else {
-            product.quantity = 1;
-            aggregatedProducts.push(product);
-          }
-        });
-
-        setProducts(aggregatedProducts);
-
-        // Calculate total price
-        const total = aggregatedProducts.reduce((acc, product) => acc + (product.price * product.quantity), 0);
-        setTotalPrice(total);
-      } catch (error) {
-        console.error('Error fetching product details:', error);
-      }
-
-      //Fetch user data
-      try {
-        const fetchUserData = async () => {
-          try {
-            const response = await axiosInstance.get(`/user`);
-            setUser(response.data);
-            console.log("🚀 ~ fetchUserData ~ response.data:", response.data)
-          } catch (error) {
-            // setLoadingError('Error fetching user data');
-          }
-        };
+    if (loading) {
+      const fetchBasket = async () => {
+        try {
+          const response = await axiosInstance.get("/basket");
+          setBasketItems(response.data);
     
-        fetchUserData();
-      } catch(error){
-      }
+          // Aggregate quantities for the same product
+          const aggregatedProducts = [];
+          response.data.items.forEach((product) => {
+            const existingProduct = aggregatedProducts.find((p) => p.productId === product.productId);
+            if (existingProduct) {
+              existingProduct.quantity += product.quantity;
+            } else {
+              aggregatedProducts.push({ ...product });
+            }
+          });
+    
+          setProducts(aggregatedProducts);
+    
+          // Calculate total price
+          const total = aggregatedProducts.reduce((acc, product) => acc + (product.price * product.quantity), 0);
+          setTotalPrice(total);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error fetching basket:', error);
+        }
+      };
+    
+      const fetchUserData = async () => {
+        try {
+          const response = await axiosInstance.get(`/user`);
+          setUser(response.data);
+          console.log("🚀 ~ fetchUserData ~ response.data:", response.data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+    
+      fetchBasket();
+      fetchUserData();
     }
+  }, [loading, basketItems, user]);
 
-    fetchProducts();
-  }, []);
+  const removeFromBasket = async (productId) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    
+    const response = await axiosInstance.delete(`/basket/${productId}`);
+    setBasketItems(response.data);
+  
+    console.log(`Removing one instance of product with ID ${productId} from the basket.`);
+
+    // Forcefully reload the page
+    window.location.reload();
+  };
 
   return (
     <div className="flex justify-center items-start mt-8">
@@ -72,6 +79,10 @@ function Basket() {
           <p>Loading...</p>
         ) : (
           <>
+          {products.length === 0 ? (
+            <p>Your basket is empty</p>
+          ) : (
+            <>
             <table className="table-auto">
               <thead>
                 <tr>
@@ -86,18 +97,19 @@ function Basket() {
                   <tr key={product._id}>
                     <td className="border px-4 py-2">{product.name}</td>
                     <td className="border px-4 py-2">{product.description}</td>
-                    <td className="border px-4 py-2">{product.price}</td>
+                    <td className="border px-4 py-2">{product.price}€</td>
                     <td className="border px-4 py-2">{product.quantity}</td>
+                    <button onClick={() => removeFromBasket(product._id)} className="px-4 py-2 bg-red-500 text-white">Remove</button>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div className="text-right mt-4">
-              <p className="text-lg font-bold">Total Price: {totalPrice.toFixed(2)}</p>
-            </div>
-            {/* Add CheckoutForm component here */}
+              <div className="text-right mt-4">
+                <p className="text-lg font-bold">Total Price: {totalPrice.toFixed(2)}€</p>
+              </div>
             <CheckoutForm user={user} />
-            {/* <CheckoutForm user={user} /> */}
+            </>
+          )}
           </>
         )}
       </div>

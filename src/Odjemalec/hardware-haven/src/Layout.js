@@ -3,11 +3,13 @@ import { Outlet } from 'react-router-dom';
 import './App.css';
 import { FiLogOut } from "react-icons/fi";
 import useOnlineStatus from './helpers/OnlineStatus';
+import axiosInstance from './helpers/AxiosInstance';
 import { FaShoppingBasket } from 'react-icons/fa';
 
 function Layout({ isAuthenticated }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [basketItemCount, setBasketItemCount] = useState(0);
+  const [user, setUser] = useState({});
 
   const isOnline = useOnlineStatus();
 
@@ -15,8 +17,34 @@ function Layout({ isAuthenticated }) {
     const header = document.getElementsByTagName('header')[0];
     const headerHeight = header.offsetHeight;
     document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
-    const storedBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
-    setBasketItemCount(storedBasketItems.length);
+
+    const fetchBasket = async () => {
+      try {
+        const response = await axiosInstance.get("/basket");
+        const items = response.data.items;
+
+        let sum = 0;
+        items.forEach(product => {
+          sum += product.quantity;
+        });
+        setBasketItemCount(sum);
+      } catch (error) {
+        console.error('Error fetching basket:', error);
+      }
+    };
+
+    const fetchUserData = async () => {
+      try {
+        const response = await axiosInstance.get(`/user`);
+        setUser(response.data);
+        console.log("🚀 ~ fetchUserData ~ response.data:", response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchBasket();
+    fetchUserData();
   }, [isOnline]);
 
   return (
@@ -44,6 +72,8 @@ function Layout({ isAuthenticated }) {
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
             <a href="/" className="text-sm font-semibold leading-6 text-white">Shop</a>
+            {isAuthenticated ? <a href="/purchase-history" className="text-sm font-semibold leading-6 text-white">Purchase History</a> : ''}
+            {(isAuthenticated && user.isAdmin)? <a href="/admin" className="text-sm font-semibold leading-6 text-white">Admin</a> : ''}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             {isAuthenticated ?

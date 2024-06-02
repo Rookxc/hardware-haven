@@ -11,6 +11,8 @@ import Basket from './shop/Basket';
 import axiosInstance from './helpers/AxiosInstance';
 import NotFound from './NotFound';
 import ThankYou from './shop/ThankYou';
+import Admin from './shop/Admin';
+import PurchaseHistory from './shop/PurchaseHistory';
 
 export const TOKEN_KEY = 'token';
 export const USER_ID_KEY = 'userId';
@@ -50,7 +52,9 @@ function App() {
             <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
             <Route path="item-detail/:id" element={<ItemDetail isAuthenticated={isAuthenticated} /> } />
-            <Route path="basket" element={isAuthenticated ? <Basket /> : <Navigate to="/login" />} />
+            <Route path="basket" element={isAuthenticated ? <Basket isAuthenticated={isAuthenticated} /> : <Navigate to="/login" />} />
+            <Route path="/purchase-history" element={isAuthenticated ? <PurchaseHistory /> : <Navigate to="/login" />} />
+            <Route path="/admin" element={isAuthenticated ? <Admin /> : <Navigate to="/login" />} />
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />

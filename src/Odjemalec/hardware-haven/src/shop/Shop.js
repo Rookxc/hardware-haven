@@ -75,19 +75,49 @@ function Shop({ isAuthenticated }) {
     navigate(`/item-detail/${id}`, { state: { product: productData } });
   };
 
-  const addToBasket = (productId) => {
+  const addToBasket = async (productId) => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
 
-    const existingBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
-    const updatedBasketItems = [...existingBasketItems, productId];
-    sessionStorage.setItem('basketItems', JSON.stringify(updatedBasketItems));
+    try {
+      const currentProduct = items.find(item => item._id === productId);
 
-    console.log(`Adding product with ID ${productId} to the basket.`);
+      if (!currentProduct) {
+        console.error('Product not found');
+        return;
+      }
 
-    setClickedItems([...clickedItems, productId]);
+      const existingBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
+      const productCount = existingBasketItems.filter(id => id === productId).length;
+
+      // Check if there's enough stock before adding to the basket
+      if (productCount < currentProduct.stock) {
+        const reqBody = {
+          productId: productId,
+          name: currentProduct.name,
+          description: currentProduct.description,
+          price: currentProduct.price,
+          category: currentProduct.category,
+          quantity: 1
+        }
+
+        const response = await axiosInstance.post('/basket', reqBody);
+
+        const updatedBasket = response.data;
+
+        sessionStorage.setItem('basketItems', JSON.stringify(updatedBasket.items));
+
+        setClickedItems([...clickedItems, productId]);
+        console.log(updatedBasket.items);
+
+      } else {
+        console.error('Not enough stock for this product');
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
   };
 
   const displayStock = (stock) => {

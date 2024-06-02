@@ -41,7 +41,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const securePaths = ['/api/products/secure', '/api/user', '/api/auth/verify', '/api/purchases', '/api/push-notifications'];
+const securePaths = ['/api/products/secure', '/api/user', '/api/auth/verify', '/api/purchases', '/api/push-notifications', '/api/basket'];
 
 function isPathSecure(req) {
   // if any of paths return true, some returns true

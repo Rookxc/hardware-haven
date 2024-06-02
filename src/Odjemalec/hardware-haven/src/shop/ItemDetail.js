@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faSolidStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faRegularStar } from '@fortawesome/free-regular-svg-icons';
+import { faShoppingCart, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from 'react-router-dom';
 import axiosInstance from '../helpers/AxiosInstance';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { USER_ID_KEY } from '../App';
 function ItemDetail({ isAuthenticated }) {
   const [hoveredRating, setHoveredRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
+  const [clickedItems, setClickedItems] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   
@@ -32,22 +34,42 @@ function ItemDetail({ isAuthenticated }) {
     fetchUserRating();
   }, []);
 
-  const addToBasket = (productId) => {
+  const addToBasket = async (productId) => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
 
-    // Get existing basket items from session storage or initialize empty array
-    const existingBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
+    try {
+      const existingBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
+      const productCount = existingBasketItems.filter(id => id === productId).length;
 
-    // Add the new productId to the basket items array
-    const updatedBasketItems = [...existingBasketItems, productId];
+      // Check if there's enough stock before adding to the basket
+      if (productCount < product.stock) {
+        const reqBody = {
+          productId: productId,
+          name:  product.name,
+          description:  product.description,
+          price:  product.price,
+          category:  product.category,
+          quantity: 1
+        }
 
-    // Save the updated basket items array to session storage
-    sessionStorage.setItem('basketItems', JSON.stringify(updatedBasketItems));
+        const response = await axiosInstance.post('/basket', reqBody);
 
-    console.log(`Adding product with ID ${productId} to the basket.`);
+        const updatedBasket = response.data;
+
+        sessionStorage.setItem('basketItems', JSON.stringify(updatedBasket.items));
+
+        setClickedItems([...clickedItems, productId]);
+        console.log(updatedBasket.items);
+
+      } else {
+        console.error('Not enough stock for this product');
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
   };
 
   const renderStars = (rating) => {
@@ -124,8 +146,14 @@ function ItemDetail({ isAuthenticated }) {
               </p>
             </div>
             <p className="mt-4">{product.description}</p>
-            <button onClick={() => addToBasket(product._id)} className="mt-4 bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-lg">
-              Add to Basket
+            <button 
+              onClick={() => addToBasket(product._id)}
+              className={`mt-4 bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-lg ${
+                clickedItems.includes(product._id) ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-700 text-white active:bg-green-500'
+              }`}
+            >
+              {clickedItems.includes(product._id) ? <FontAwesomeIcon icon={faCheckCircle} className="text-white mr-2" /> : <FontAwesomeIcon icon={faShoppingCart} className="text-white mr-2" />} 
+              {clickedItems.includes(product._id) ? 'Add 1 more' : 'Add to Basket'}
             </button>
           </div>
         </div>

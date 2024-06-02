@@ -9,13 +9,23 @@ router.get('/', async function (req, res, next) {
   try {
     const user = await User.findById(userId);
 
-    return res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      surname: user.surname,
-      email: user.email,
-      pushNofitications: user.pushNofitications
-    });
+    if (user.isAdmin) {
+      return res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        surname: user.surname,
+        email: user.email,
+        isAdmin: user.isAdmin
+      });
+    } else {
+      return res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        surname: user.surname,
+        email: user.email
+      });
+    }
+    
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server error' });

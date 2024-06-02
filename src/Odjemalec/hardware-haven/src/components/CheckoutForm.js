@@ -34,10 +34,7 @@ function CheckoutForm({ user }) {
     const errors = validateFormData(formData);
     if (Object.keys(errors).length === 0) {
       console.log(formData);
-      const basketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
-      await axiosInstance.post('/products/checkout', { basketItems });
-
-      sessionStorage.removeItem('basketItems');
+      await axiosInstance.post('/purchases');
       await new Promise(resolve => setTimeout(resolve, 2000));
       navigate('/thank-you'); // Redirect to ThankYou page
     } else {

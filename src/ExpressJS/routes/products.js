@@ -89,27 +89,4 @@ router.post('/search', async function (req, res, next) {
   }
 });
 
-// For checkout (-1 in stock)
-router.post('/checkout', async (req, res) => {
-  try {
-    const { basketItems } = req.body;
-
-    for (const productId of basketItems) {
-      const product = await Product.findById(productId);
-      if (product) {
-
-        product.stock -= 1; 
-        await product.save();
-      } else {
-        console.error(`Product with ID ${productId} not found.`);
-      }
-    }
-
-    res.status(200).json({ success: true, message: 'Checkout successful!' });
-  } catch (error) {
-    console.error('Error during checkout:', error);
-    res.status(500).json({ success: false, error: 'An error occurred during checkout.' });
-  }
-});
-
 module.exports = router;
