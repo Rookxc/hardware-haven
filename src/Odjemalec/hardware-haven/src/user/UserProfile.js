@@ -28,7 +28,7 @@ function UserProfile() {
       try {
         const response = await axiosInstance.get(`/user`);
         setUser(response.data);
-        setEditedUser(response.data);
+        setEditedUser({ ...response.data, pushNotifications: response.data.pushNotifications || false });
         setLoading(false);
       } catch (error) {
         setLoadingError('Error fetching user data');
@@ -101,7 +101,7 @@ function UserProfile() {
       }
 
       if (valid) {
-        if (editedUser.pushNofitications) {
+        if (editedUser.pushNotifications) {
           subscribeToPushNotifications();
         } else {
           unsubscribeFromPushNotifications();
@@ -111,7 +111,7 @@ function UserProfile() {
           const response = await axiosInstance.put(`/user`, editedUser);
           if (response.status === 200) {
             console.log("Success");
-            sendPushNotification('User updated', 'User updated successfuly');
+            sendPushNotification('User updated', 'User updated successfully');
 
             setUser(editedUser);
             setEditingState(EditingState.NONE);
@@ -241,7 +241,7 @@ function UserProfile() {
                 label="Push Notifications"
                 id="pushNotifications"
                 name="pushNotifications"
-                checked={editingState === EditingState.USER_DATA ? editedUser.pushNofitications : user.pushNofitications}
+                checked={editingState === EditingState.USER_DATA ? editedUser.pushNotifications : user.pushNotifications}
                 onChange={handleUserDataChange}
                 disabled={editingState !== EditingState.USER_DATA}
               />

@@ -37,7 +37,6 @@ function Shop({ isAuthenticated }) {
   useEffect(() => {
     fetchAllProducts();
     if (annyang) {
-      console.log("HELLOO")
       const commands = {
         'filter :category': filterItems,
         'filter by :category': filterItems,
