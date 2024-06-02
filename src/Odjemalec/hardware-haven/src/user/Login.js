@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../helpers/AxiosInstance';
 import { TOKEN_KEY, USER_ID_KEY } from '../App';
 import { useNavigate } from 'react-router-dom';
+import { subscribeToPushNotifications } from '../serviceWorkerRegistration';
 
 export function Logout() {
   const navigate = useNavigate();
@@ -10,11 +11,13 @@ export function Logout() {
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(USER_ID_KEY);
 
-    if (window.location.pathname === '/') {
-      window.location.reload();
-    } else {
-      navigate('/');
-    }
+    setTimeout(() => {
+      if (window.location.pathname === '/') {
+        window.location.reload();
+      } else {
+        navigate('/');
+      }
+    }, 1000);
   }, []);
 
   return null;
@@ -33,9 +36,14 @@ function Login() {
         password
       });
 
-      const { token, _id } = response.data;
+      const { token, _id, pushNofitications } = response.data;
       sessionStorage.setItem(TOKEN_KEY, token);
       sessionStorage.setItem(USER_ID_KEY, _id);
+
+      // subscribe if profile has enabled push notifications
+      if (pushNofitications) {
+        subscribeToPushNotifications();
+      }
 
       setMessage('Login successful');
       //change this later

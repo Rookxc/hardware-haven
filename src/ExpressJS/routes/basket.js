@@ -3,9 +3,11 @@ const router = express.Router();
 const Basket = require('../models/Basket');
 
 // Get basket for a user
-router.get('/:userId', async (req, res) => {
+router.get('/', async (req, res) => {
+  const userId = req.userId;
+
   try {
-    const basket = await Basket.findOne({ userId: req.params.userId });
+    const basket = await Basket.findOne({ userId: userId });
     if (!basket) {
       return res.status(404).json({ message: 'Basket not found' });
     }
@@ -17,8 +19,8 @@ router.get('/:userId', async (req, res) => {
 });
 
 // Add item to basket
-router.post('/:userId', async (req, res) => {
-  const { userId } = req.params;
+router.post('/', async (req, res) => {
+  const userId = req.userId;
   const { productId, name, description, price, category, quantity } = req.body;
 
   try {
@@ -45,8 +47,9 @@ router.post('/:userId', async (req, res) => {
 });
 
 // Remove item from basket
-router.delete('/:userId/:itemId', async (req, res) => {
-  const { userId, itemId } = req.params;
+router.delete('/:itemId', async (req, res) => {
+  const userId = req.userId;
+  const { itemId } = req.params;
 
   try {
     const basket = await Basket.findOne({ userId });

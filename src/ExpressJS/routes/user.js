@@ -3,15 +3,18 @@ const User = require('../models/User');
 const validateEmail = require('../helpers/Validator');
 var router = express.Router();
 
-router.get('/:id', async function (req, res, next) {
+router.get('/', async function (req, res, next) {
+  const userId = req.userId;
+
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(userId);
 
     return res.status(200).json({
       _id: user._id,
       name: user.name,
       surname: user.surname,
-      email: user.email
+      email: user.email,
+      pushNofitications: user.pushNofitications
     });
   } catch (error) {
     console.error(error);
@@ -19,10 +22,12 @@ router.get('/:id', async function (req, res, next) {
   }
 });
 
-router.put('/update-password/:id', async function (req, res, next) {
+router.put('/update-password', async function (req, res, next) {
+  const userId = req.userId;
   const { password, newPassword, repeatPassword } = req.body;
+
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(userId);
 
     if (!password) {
       return res.status(400).json({ message: 'This field is required.', field: 'password' });
@@ -48,8 +53,10 @@ router.put('/update-password/:id', async function (req, res, next) {
   }
 });
 
-router.put('/:id', async function (req, res, next) {
-  const { name, surname, email } = req.body;
+router.put('/', async function (req, res, next) {
+  const userId = req.userId;
+  const { name, surname, email, pushNotifications } = req.body;
+
   try {
     let errors = [];
 
@@ -73,10 +80,11 @@ router.put('/:id', async function (req, res, next) {
       });
     }
 
-    const user = await User.findByIdAndUpdate(req.params.id, {
+    const user = await User.findByIdAndUpdate(userId, {
       name: name,
       surname: surname,
-      email: email
+      email: email,
+      pushNofitications: pushNotifications
     });
 
     return res.status(200).json({

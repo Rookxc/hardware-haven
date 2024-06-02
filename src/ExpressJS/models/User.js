@@ -14,12 +14,16 @@ const userSchema = new mongoose.Schema({
   surname: {
     type: String,
     required: true,
-    unique: true,
   },
   password: {
     type: String,
     required: true,
   },
+  pushNofitications: {
+    type: Boolean,
+    required: true,
+    default: false,
+  }
 });
 
 userSchema.pre('save', async function (next) {
