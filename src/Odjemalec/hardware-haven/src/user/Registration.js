@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axiosInstance from '../helpers/AxiosInstance';
+import useOnlineStatus from '../helpers/OnlineStatus';
 
 function Register() {
   const [name, setName] = useState('');
@@ -7,6 +8,8 @@ function Register() {
   const [surname, setSurname] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+
+  const isOnline = useOnlineStatus();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,6 +44,7 @@ function Register() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              disabled={!isOnline}
             />
           </div>
           <div className="mb-4">
@@ -52,6 +56,7 @@ function Register() {
               value={surname}
               onChange={(e) => setSurname(e.target.value)}
               required
+              disabled={!isOnline}
             />
           </div>
           <div className="mb-4">
@@ -63,6 +68,7 @@ function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={!isOnline}
             />
           </div>
           <div className="mb-6">
@@ -74,10 +80,11 @@ function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={!isOnline}
             />
           </div>
           <div className="flex items-center justify-between">
-            <button className="form-button" type="submit">Register</button>
+            <button className={`form-button ${!isOnline && 'opacity-50 cursor-not-allowed'}`} type="submit" disabled={!isOnline}>Register</button>
           </div>
         </form>
         {message && <p className="message">{message}</p>}

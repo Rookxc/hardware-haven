@@ -6,9 +6,8 @@ import useOnlineStatus from './helpers/OnlineStatus';
 import axiosInstance from './helpers/AxiosInstance';
 import { FaShoppingBasket } from 'react-icons/fa';
 
-function Layout({ isAuthenticated }) {
+function Layout({ isAuthenticated, itemCount }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [basketItemCount, setBasketItemCount] = useState(0);
   const [user, setUser] = useState({});
 
   const isOnline = useOnlineStatus();
@@ -17,21 +16,6 @@ function Layout({ isAuthenticated }) {
     const header = document.getElementsByTagName('header')[0];
     const headerHeight = header.offsetHeight;
     document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
-
-    const fetchBasket = async () => {
-      try {
-        const response = await axiosInstance.get("/basket");
-        const items = response.data.items;
-
-        let sum = 0;
-        items.forEach(product => {
-          sum += product.quantity;
-        });
-        setBasketItemCount(sum);
-      } catch (error) {
-        console.error('Error fetching basket:', error);
-      }
-    };
 
     const fetchUserData = async () => {
       try {
@@ -43,9 +27,10 @@ function Layout({ isAuthenticated }) {
       }
     };
 
-    fetchBasket();
-    fetchUserData();
-  }, [isOnline]);
+    if (isAuthenticated) {
+      fetchUserData();
+    }
+  }, [isOnline, isAuthenticated]);
 
   return (
     <div className="App">
@@ -73,7 +58,7 @@ function Layout({ isAuthenticated }) {
           <div className="hidden lg:flex lg:gap-x-12">
             <a href="/" className="text-sm font-semibold leading-6 text-white">Shop</a>
             {isAuthenticated ? <a href="/purchase-history" className="text-sm font-semibold leading-6 text-white">Purchase History</a> : ''}
-            {(isAuthenticated && user.isAdmin)? <a href="/admin" className="text-sm font-semibold leading-6 text-white">Admin</a> : ''}
+            {(isAuthenticated && user.isAdmin) ? <a href="/admin" className="text-sm font-semibold leading-6 text-white">Admin</a> : ''}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             {isAuthenticated ?
@@ -156,8 +141,8 @@ function Layout({ isAuthenticated }) {
       <div className={`fixed bottom-8 right-8`}>
         <a href="/basket" className="flex items-center justify-center bg-blue-500 text-white rounded-full w-12 h-12 hover:bg-blue-600 relative">
           <FaShoppingBasket className="h-6 w-6" />
-          {basketItemCount > 0 && (
-             <span className="bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1 ml-1 absolute top-7 right-7">{basketItemCount}</span>
+          {itemCount > 0 && (
+            <span className="bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1 ml-1 absolute top-7 right-7">{itemCount}</span>
           )}
         </a>
       </div>

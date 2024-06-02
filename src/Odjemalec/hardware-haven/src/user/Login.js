@@ -3,13 +3,13 @@ import axiosInstance from '../helpers/AxiosInstance';
 import { TOKEN_KEY, USER_ID_KEY } from '../App';
 import { useNavigate } from 'react-router-dom';
 import { subscribeToPushNotifications } from '../serviceWorkerRegistration';
+import useOnlineStatus from '../helpers/OnlineStatus';
 
 export function Logout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    sessionStorage.removeItem(TOKEN_KEY);
-    sessionStorage.removeItem(USER_ID_KEY);
+    sessionStorage.clear();
 
     setTimeout(() => {
       if (window.location.pathname === '/') {
@@ -27,6 +27,8 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  
+  const isOnline = useOnlineStatus();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,6 +71,7 @@ function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={!isOnline}
             />
           </div>
           <div className="mb-6">
@@ -80,10 +83,11 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={!isOnline}
             />
           </div>
           <div className="flex items-center justify-between">
-            <button className="form-button" type="submit">Login</button>
+            <button className={`form-button ${!isOnline && 'opacity-50 cursor-not-allowed'}`} type="submit" disabled={!isOnline}>Login</button>
           </div>
         </form>
         {message && <p className="message">{message}</p>}

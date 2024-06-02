@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../helpers/AxiosInstance';
 import Input from './Input';
+import useOnlineStatus from '../helpers/OnlineStatus';
+import { BASKET_KEY } from '../App';
 
 function CheckoutForm({ user }) {
   const navigate = useNavigate();
@@ -14,6 +16,8 @@ function CheckoutForm({ user }) {
     zipcode: '',
   });
   const [errors, setErrors] = useState({});
+
+  const isOnline = useOnlineStatus();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,6 +39,7 @@ function CheckoutForm({ user }) {
     if (Object.keys(errors).length === 0) {
       console.log(formData);
       await axiosInstance.post('/purchases');
+      sessionStorage.removeItem(BASKET_KEY);
       await new Promise(resolve => setTimeout(resolve, 2000));
       navigate('/thank-you'); // Redirect to ThankYou page
     } else {
@@ -93,6 +98,7 @@ function CheckoutForm({ user }) {
           value={formData.name}
           onChange={handleChange}
           error={errors.name}
+          disabled={!isOnline}
         />
       </div>
       <div className="mb-4">
@@ -104,6 +110,7 @@ function CheckoutForm({ user }) {
           value={formData.surname}
           onChange={handleChange}
           error={errors.surname}
+          disabled={!isOnline}
         />
       </div>
       <div className="mb-4">
@@ -115,6 +122,7 @@ function CheckoutForm({ user }) {
           value={formData.email}
           onChange={handleChange}
           error={errors.email}
+          disabled={!isOnline}
         />
       </div>
       <div className="mb-4">
@@ -126,6 +134,7 @@ function CheckoutForm({ user }) {
           value={formData.address}
           onChange={handleChange}
           error={errors.address}
+          disabled={!isOnline}
         />
       </div>
       <div className="mb-4">
@@ -137,6 +146,7 @@ function CheckoutForm({ user }) {
           value={formData.city}
           onChange={handleChange}
           error={errors.city}
+          disabled={!isOnline}
         />
       </div>
       <div className="mb-4">
@@ -148,10 +158,11 @@ function CheckoutForm({ user }) {
           value={formData.zipcode}
           onChange={handleChange}
           error={errors.zipcode}
+          disabled={!isOnline}
         />
       </div>
       <div className="flex justify-center">
-        <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4">Purchase</button>
+        <button disabled={!isOnline} type="submit" className={`bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4 ${!isOnline && 'opacity-50 cursor-not-allowed'}`}>Purchase</button>
       </div>
     </form>
   );

@@ -48,3 +48,7 @@ header, .bg-theme {
   @apply flex items-center justify-center bg-gray-100;
   min-height: calc(100vh - var(--header-height));
 }
+
+.tooltip {
+  @apply absolute top-0 right-full mr-2 p-2 bg-gray-800 text-white text-sm rounded shadow-lg w-64;
+}

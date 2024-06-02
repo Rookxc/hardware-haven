@@ -3,21 +3,23 @@ import { FaStar as FaSolidStar, FaShoppingCart, FaCheckCircle } from 'react-icon
 import { useLocation } from 'react-router-dom';
 import axiosInstance from '../helpers/AxiosInstance';
 import { useNavigate } from 'react-router-dom';
-import { USER_ID_KEY } from '../App';
+import { BASKET_KEY, USER_ID_KEY } from '../App';
+import useOnlineStatus from '../helpers/OnlineStatus';
 
-function ItemDetail({ isAuthenticated }) {
+function ItemDetail({ isAuthenticated, handleBasketChange }) {
   const [hoveredRating, setHoveredRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
   const [clickedItems, setClickedItems] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
-  
+
+  const isOnline = useOnlineStatus();
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const { product } = location.state || {};
   const userId = sessionStorage.getItem(USER_ID_KEY); // Get the user ID from session storage
-
 
   const fetchUserRating = async () => {
     if (product && userId) {
@@ -31,36 +33,55 @@ function ItemDetail({ isAuthenticated }) {
     fetchUserRating();
   }, []);
 
-  const addToBasket = async (productId) => {
+  const addToBasket = async (item) => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
 
     try {
-      const existingBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
-      const productCount = existingBasketItems.filter(id => id === productId).length;
+      const existingBasketItems = JSON.parse(sessionStorage.getItem(BASKET_KEY)) || [];
+      const existingItem = existingBasketItems.filter(existingItem => existingItem.productId === item._id);
 
       // Check if there's enough stock before adding to the basket
-      if (productCount < product.stock) {
+      if (existingItem.length === 0 || existingItem[0].quantity < product.stock) {
         const reqBody = {
-          productId: productId,
-          name:  product.name,
-          description:  product.description,
-          price:  product.price,
-          category:  product.category,
+          productId: item._id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          category: product.category,
           quantity: 1
         }
 
-        const response = await axiosInstance.post('/basket', reqBody);
+        let updatedBasketItems;
 
-        const updatedBasket = response.data;
+        if (isOnline) {
+          const response = await axiosInstance.post('/basket', reqBody);
+          updatedBasketItems = response.data.items;
+          sessionStorage.setItem(BASKET_KEY, JSON.stringify(updatedBasketItems));
+        } else {
+          updatedBasketItems = [...existingBasketItems];
+          const existingItemIndex = updatedBasketItems.findIndex(existingItem => existingItem.productId === item._id);
 
-        sessionStorage.setItem('basketItems', JSON.stringify(updatedBasket.items));
+          if (existingItemIndex !== -1) {
+            updatedBasketItems[existingItemIndex].quantity += reqBody.quantity;
+          } else {
+            updatedBasketItems.push(reqBody);
+          }
 
-        setClickedItems([...clickedItems, productId]);
-        console.log(updatedBasket.items);
+          sessionStorage.setItem(BASKET_KEY, JSON.stringify(updatedBasketItems));
+        }
 
+        if(updatedBasketItems) {
+          let itemCount = 0;
+          updatedBasketItems.forEach(element => {
+            itemCount += element.quantity;
+          });
+          handleBasketChange(itemCount);
+        }
+
+        setClickedItems([...clickedItems, item._id]);
       } else {
         console.error('Not enough stock for this product');
       }
@@ -147,7 +168,7 @@ function ItemDetail({ isAuthenticated }) {
             <p className="mt-4">{product.description}</p>
             {product.stock > 0 ? (
               <button 
-                onClick={() => addToBasket(product._id)}
+                onClick={() => addToBasket(product)}
                 className={`mt-4 bg-gray-800 text-white py-2 w-full flex items-center justify-center rounded-lg ${
                   clickedItems.includes(product._id) ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-700 text-white active:bg-green-500'
                 }`}
@@ -177,7 +198,7 @@ function ItemDetail({ isAuthenticated }) {
           ))}
         </div>
         {selectedRating > 0 && isClicked && (
-          <button onClick={confirmRating} className="mt-4 mb-4 bg-blue-500 text-white py-2 px-4 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed" disabled={isDisabled}>
+          <button onClick={confirmRating} className="mt-4 mb-4 bg-blue-500 text-white py-2 px-4 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed" disabled={isDisabled || !isOnline}>
             Confirm Rating
           </button>
         )}

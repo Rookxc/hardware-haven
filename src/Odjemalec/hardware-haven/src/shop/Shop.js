@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../helpers/AxiosInstance';
 import { FaShoppingCart, FaCheckCircle, FaSearch } from 'react-icons/fa';
 import annyang from 'annyang';
+import useOnlineStatus from '../helpers/OnlineStatus';
+import { BASKET_KEY } from '../App';
 
-function Shop({ isAuthenticated }) {
+function Shop({ isAuthenticated, handleBasketChange }) {
   const [items, setItems] = useState([]);
   const [clickedItems, setClickedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,6 +16,7 @@ function Shop({ isAuthenticated }) {
   const [sortOrder, setSortOrder] = useState("");
 
   const navigate = useNavigate();
+  const isOnline = useOnlineStatus();
 
   const fetchAllProducts = async () => {
     try {
@@ -74,27 +77,27 @@ function Shop({ isAuthenticated }) {
     navigate(`/item-detail/${id}`, { state: { product: productData } });
   };
 
-  const addToBasket = async (productId) => {
+  const addToBasket = async (item) => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
 
     try {
-      const currentProduct = items.find(item => item._id === productId);
+      const currentProduct = items.find(itemEl => itemEl._id === item._id);
 
       if (!currentProduct) {
         console.error('Product not found');
         return;
       }
 
-      const existingBasketItems = JSON.parse(sessionStorage.getItem('basketItems')) || [];
-      const productCount = existingBasketItems.filter(id => id === productId).length;
+      const existingBasketItems = JSON.parse(sessionStorage.getItem(BASKET_KEY)) || [];
+      const existingItem = existingBasketItems.filter(existingItem => existingItem.productId === item._id);
 
       // Check if there's enough stock before adding to the basket
-      if (productCount < currentProduct.stock) {
+      if (existingItem.length === 0 || existingItem[0].quantity < currentProduct.stock) {
         const reqBody = {
-          productId: productId,
+          productId: item._id,
           name: currentProduct.name,
           description: currentProduct.description,
           price: currentProduct.price,
@@ -102,21 +105,40 @@ function Shop({ isAuthenticated }) {
           quantity: 1
         }
 
-        const response = await axiosInstance.post('/basket', reqBody);
+        let updatedBasketItems;
 
-        const updatedBasket = response.data;
+        if (isOnline) {
+          const response = await axiosInstance.post('/basket', reqBody);
+          updatedBasketItems = response.data.items;
+          sessionStorage.setItem(BASKET_KEY, JSON.stringify(updatedBasketItems));
+        } else {
+          updatedBasketItems = [...existingBasketItems];
+          const existingItemIndex = updatedBasketItems.findIndex(existingItem => existingItem.productId === item._id);
 
-        sessionStorage.setItem('basketItems', JSON.stringify(updatedBasket.items));
+          if (existingItemIndex !== -1) {
+            updatedBasketItems[existingItemIndex].quantity += reqBody.quantity;
+          } else {
+            updatedBasketItems.push(reqBody);
+          }
 
-        setClickedItems([...clickedItems, productId]);
-        console.log(updatedBasket.items);
+          sessionStorage.setItem(BASKET_KEY, JSON.stringify(updatedBasketItems));
+        }
 
+        if (updatedBasketItems) {
+          let itemCount = 0;
+          updatedBasketItems.forEach(element => {
+            itemCount += element.quantity;
+          });
+          handleBasketChange(itemCount);
+        }
       } else {
         console.error('Not enough stock for this product');
       }
     } catch (error) {
       console.error('Error fetching products:', error);
     }
+
+    setClickedItems([...clickedItems, item._id]);
   };
 
   const displayStock = (stock) => {
@@ -135,6 +157,7 @@ function Shop({ isAuthenticated }) {
     try {
       const response = await axiosInstance.get(`/products?category=${category}`);
       setItems(response.data);
+
     } catch (error) {
       console.error('Error filtering products:', error);
     }
@@ -153,12 +176,20 @@ function Shop({ isAuthenticated }) {
           <ul className="space-y-2 mx-3">
             {['GPU', 'CPU', 'Motherboard', 'RAM', 'Storage Device', 'Power Supply', 'Case'].map((category) => (
               <li key={category}>
-                <span
-                  onClick={() => handleCategoryChange(category)}
-                  className={`cursor-pointer hover:opacity-50 ${selectedCategories.includes(category) ? 'font-bold text-blue-500' : ''}`}
-                >
-                  {category}
-                </span>
+                {isOnline ?
+                  <span
+                    onClick={() => handleCategoryChange(category)}
+                    className={`cursor-pointer hover:opacity-50 ${selectedCategories.includes(category) && 'font-bold text-blue-500'}`}
+                  >
+                    {category}
+                  </span>
+                  :
+                  <span
+                    className={`text-gray-400 cursor-default`}
+                  >
+                    {category}
+                  </span>
+                }
               </li>
             ))}
           </ul>
@@ -171,6 +202,7 @@ function Shop({ isAuthenticated }) {
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
                 className="w-full p-2 border rounded mb-2"
+                disabled={!isOnline}
               />
               <input
                 type="number"
@@ -178,6 +210,7 @@ function Shop({ isAuthenticated }) {
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
                 className="w-full p-2 border rounded"
+                disabled={!isOnline}
               />
             </div>
           </div>
@@ -187,7 +220,8 @@ function Shop({ isAuthenticated }) {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="w-full p-2 border rounded text-sm"
+                className={`w-full p-2 border rounded text-sm ${!isOnline && 'opacity-50'}`}
+                disabled={!isOnline}
               >
                 <option value="">-- Select --</option>
                 <option value="asc">Cheapest First</option>
@@ -198,7 +232,7 @@ function Shop({ isAuthenticated }) {
             </div>
           </div>
           <div className="mt-8 flex justify-center">
-            <button onClick={handleSearch} className="form-button">Filter</button>
+            <button onClick={handleSearch} className={`form-button ${!isOnline && 'opacity-50 cursor-not-allowed'}`} disabled={!isOnline}>Filter</button>
           </div>
         </nav>
         <div className="flex flex-col w-full">
@@ -209,11 +243,18 @@ function Shop({ isAuthenticated }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full p-2 rounded-md pl-10"
+              disabled={!isOnline}
             />
-            <FaSearch
-              className="text-black ml-3 absolute top-1/2 transform -translate-y-1/2 left-0 cursor-pointer"
-              onClick={handleSearch}
-            />
+            {isOnline ?
+              <FaSearch
+                className="text-black ml-3 absolute top-1/2 transform -translate-y-1/2 left-0 cursor-pointer"
+                onClick={handleSearch}
+              />
+              :
+              <FaSearch
+                className="text-gray-400 ml-3 absolute top-1/2 transform -translate-y-1/2 left-0 cursor-not-allowed"
+              />
+            }
           </div>
           <main className="flex-1 p-5 flex flex-wrap gap-5 justify-start">
             {items.length > 0 ? (
@@ -230,12 +271,11 @@ function Shop({ isAuthenticated }) {
                   </div>
                   {item.stock > 0 ? (
                     <button
-                      onClick={() => addToBasket(item._id)}
-                      className={`py-2 w-full flex items-center justify-center rounded-b-lg ${
-                        clickedItems.includes(item._id) ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-700 text-white active:bg-green-500'
-                      }`}
+                      onClick={() => addToBasket(item)}
+                      className={`py-2 w-full flex items-center justify-center rounded-b-lg ${clickedItems.includes(item._id) ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-700 text-white active:bg-green-500'
+                        }`}
                     >
-                      {clickedItems.includes(item._id) ? <FaCheckCircle className="text-white mr-2" /> : <FaShoppingCart className="text-white mr-2" />} 
+                      {clickedItems.includes(item._id) ? <FaCheckCircle className="text-white mr-2" /> : <FaShoppingCart className="text-white mr-2" />}
                       {clickedItems.includes(item._id) ? 'Add 1 more' : 'Add to Basket'}
                     </button>
                   ) : (

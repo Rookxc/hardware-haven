@@ -6,6 +6,7 @@ import axiosInstance from '../helpers/AxiosInstance';
 import sendPushNotification from '../helpers/PushNotification';
 import Checkbox from '../components/Checkbox';
 import { subscribeToPushNotifications, unsubscribeFromPushNotifications } from '../serviceWorkerRegistration';
+import useOnlineStatus from '../helpers/OnlineStatus';
 
 const EditingState = {
   NONE: 'None',
@@ -22,6 +23,9 @@ function UserProfile() {
   const [errors, setErrors] = useState({});
   const [editedUser, setEditedUser] = useState({});
   const [editedPassword, setEditedPassword] = useState({});
+  const [editDataTooltip, setEditDataTooltip] = useState('');
+
+  const isOnline = useOnlineStatus();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -38,6 +42,12 @@ function UserProfile() {
 
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    if(!isOnline) {
+      setEditingState(EditingState.NONE);
+    }
+  }, [isOnline]);
 
   const handleSubmit = async () => {
     setMessage('');
@@ -182,12 +192,32 @@ function UserProfile() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-center">User Profile</h2>
           {editingState === EditingState.NONE &&
-            <button onClick={() => {
-              setMessage('');
-              setEditingState(EditingState.USER_DATA);
-            }} className="focus:outline-none">
-              <FiEdit2 className='w-5 h-5' />
-            </button>}
+            <div
+              className="relative"
+              onMouseEnter={() => {
+                if (!isOnline) {
+                  setEditDataTooltip('Functionality is disabled because user is offline.');
+                }
+              }}
+              onMouseLeave={() => {
+                setEditDataTooltip('');
+              }}
+            >
+              <button
+                onClick={() => {
+                  setMessage('');
+                  setEditingState(EditingState.USER_DATA);
+                }}
+                disabled={!isOnline}>
+                <FiEdit2 className={`w-5 h-5 ${isOnline ? 'text-black' : 'text-gray-400'}`} />
+              </button>
+              {!isOnline && editDataTooltip && (
+                <div className="top-0 tooltip">
+                  {editDataTooltip}
+                </div>
+              )}
+            </div>
+          }
         </div>
         {editingState !== EditingState.PASSWORD &&
           <>

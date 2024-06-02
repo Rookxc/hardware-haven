@@ -16,10 +16,12 @@ import PurchaseHistory from './shop/PurchaseHistory';
 
 export const TOKEN_KEY = 'token';
 export const USER_ID_KEY = 'userId';
+export const BASKET_KEY = 'basketItems';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [itemCount, setItemCount] = useState(0);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -29,14 +31,27 @@ function App() {
           await axiosInstance.get(`/auth/verify`);
           setIsAuthenticated(true);
         } catch (error) {
-          sessionStorage.removeItem(TOKEN_KEY);
+          sessionStorage.clear();
         }
       }
       setIsLoading(false);
     };
 
     checkAuth();
+
+    const items = JSON.parse(sessionStorage.getItem(BASKET_KEY)) || [];
+    if(items) {
+      let itemCount = 0;
+      items.forEach(element => {
+        itemCount += element.quantity;
+      });
+      handleBasketChange(itemCount);
+    }
   }, []);
+
+  function handleBasketChange(itemCount) {
+    setItemCount(itemCount);
+  }
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -46,12 +61,12 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout isAuthenticated={isAuthenticated} />}>
-            <Route index element={<Shop isAuthenticated={isAuthenticated} />} />
+          <Route path="/" element={<Layout isAuthenticated={isAuthenticated} itemCount={itemCount} />}>
+            <Route index element={<Shop isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} />} />
             <Route path="profile" element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />} />
             <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
-            <Route path="item-detail/:id" element={<ItemDetail isAuthenticated={isAuthenticated} /> } />
+            <Route path="item-detail/:id" element={<ItemDetail isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} /> } />
             <Route path="basket" element={isAuthenticated ? <Basket isAuthenticated={isAuthenticated} /> : <Navigate to="/login" />} />
             <Route path="/purchase-history" element={isAuthenticated ? <PurchaseHistory /> : <Navigate to="/login" />} />
             <Route path="/admin" element={isAuthenticated ? <Admin /> : <Navigate to="/login" />} />
