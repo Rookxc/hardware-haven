@@ -21,6 +21,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var productsRouter = require('./routes/products');
+var purchasesRouter = require('./routes/purchases');
 var basketRouter = require('./routes/basket');
 var pushNotificationsRouter = require('./routes/push-notifications');
 
@@ -42,6 +43,7 @@ app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
+app.use('/api/purchases', purchasesRouter);
 app.use('/api/basket', basketRouter);
 app.use('/api/push-notifications', pushNotificationsRouter);
 

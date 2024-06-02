@@ -49,7 +49,7 @@ function App() {
             <Route path="profile" element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />} />
             <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
-            <Route path="item-detail/:id" element={<ItemDetail /> } />
+            <Route path="item-detail/:id" element={<ItemDetail isAuthenticated={isAuthenticated} /> } />
             <Route path="basket" element={isAuthenticated ? <Basket /> : <Navigate to="/login" />} />
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="logout" element={<Logout />} />

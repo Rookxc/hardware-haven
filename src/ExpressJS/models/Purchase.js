@@ -24,13 +24,13 @@ const processedItemSchema = new mongoose.Schema({
   }
 });
 
-const purchaseSchema = new Schema({
+const purchaseSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    purchases: [
+    purchaseHistory: [
       {
         items: [processedItemSchema],
         purchaseDate: { type: Date, default: Date.now }
