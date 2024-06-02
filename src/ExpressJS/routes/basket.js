@@ -88,7 +88,11 @@ router.put('/sync', async (req, res) => {
 
       if (existingItemIndex > -1) {
         // If the item already exists in the basket, update the quantity
-        basket.items[existingItemIndex].quantity = item.quantity;
+        // Also, check if the product has sufficient stock
+        const product = await Product.findById(item.productId);
+        if (product && product.stock >= item.quantity) {
+          basket.items[existingItemIndex].quantity = item.quantity;
+        }
       } else {
         // If the item doesn't exist in the basket, add it
         // Check if the product exists and has sufficient stock
