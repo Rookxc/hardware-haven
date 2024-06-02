@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  pushNofitications: {
+  pushNotifications: {
     type: Boolean,
     required: true,
     default: false,

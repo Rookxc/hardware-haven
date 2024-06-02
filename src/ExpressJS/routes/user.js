@@ -22,7 +22,8 @@ router.get('/', async function (req, res, next) {
         _id: user._id,
         name: user.name,
         surname: user.surname,
-        email: user.email
+        email: user.email,
+        pushNotifications: user.pushNotifications
       });
     }
     
@@ -94,7 +95,7 @@ router.put('/', async function (req, res, next) {
       name: name,
       surname: surname,
       email: email,
-      pushNofitications: pushNotifications
+      pushNotifications: pushNotifications
     });
 
     return res.status(200).json({

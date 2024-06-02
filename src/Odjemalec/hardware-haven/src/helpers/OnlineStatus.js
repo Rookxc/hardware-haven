@@ -9,13 +9,10 @@ const useOnlineStatus = () => {
     const handleOnlineStatusChange = () => {
       setIsOnline(navigator.onLine);
 
-      console.log("onmline")
-
       const items = JSON.parse(sessionStorage.getItem(BASKET_KEY)) || [];
-      console.log(items)
+
       if (navigator.onLine && items) {
         axiosInstance.put('/basket/sync', { basketItems: items });
-        console.log("t")
       }
     };
 
