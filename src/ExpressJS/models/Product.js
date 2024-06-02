@@ -54,7 +54,7 @@ productSchema.methods.getAverageRating = function() {
   const ratings = this.ratings;
   if (ratings.length === 0) return 0;
   const sum = ratings.reduce((acc, rating) => acc + rating.value, 0);
-  return sum / ratings.length;
+  return parseFloat((sum / ratings.length).toFixed(1)); // return the result as a float with 1 decimal place
 };
 
 const Product = mongoose.model('Product', productSchema);
