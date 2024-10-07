@@ -23,7 +23,7 @@ function Register() {
       setMessage('Registration successful');
       //change this later
       setTimeout(() => {
-        window.location.href = '/';
+        window.location.href = '/login';
       }, 1000);
     } catch (error) {
       setMessage('Registration failed');
