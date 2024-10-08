@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
-const { verifyToken } = require('./helpers/Authentication');
+const { verifyToken } = require('../helpers/Authentication');
 
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -18,14 +18,14 @@ mongoose.connect(process.env.MONGODB_CONN, {
   .then(() => console.log('MongoDB connected...'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-var indexRouter = require('./routes/index');
-var userRouter = require('./routes/user');
-var authRouter = require('./routes/auth');
-var productsRouter = require('./routes/products');
-var productsSecureRouter = require('./routes/productsSecure');
-var purchasesRouter = require('./routes/purchases');
-var basketRouter = require('./routes/basket');
-var pushNotificationsRouter = require('./routes/pushNotifications');
+var indexRouter = require('../routes/index');
+var userRouter = require('../routes/user');
+var authRouter = require('../routes/auth');
+var productsRouter = require('../routes/products');
+var productsSecureRouter = require('../routes/productsSecure');
+var purchasesRouter = require('../routes/purchases');
+var basketRouter = require('../routes/basket');
+var pushNotificationsRouter = require('../routes/pushNotifications');
 
 var app = express();
 
