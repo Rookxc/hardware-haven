@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { BASKET_KEY, USER_ID_KEY } from '../App';
 import useOnlineStatus from '../helpers/OnlineStatus';
 
-//Deploy 
 function ItemDetail({ isAuthenticated, handleBasketChange }) {
   const [hoveredRating, setHoveredRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
