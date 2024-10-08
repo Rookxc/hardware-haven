@@ -73,7 +73,11 @@ router.put('/ratings/:itemId', async function (req, res, next) {
     // Save the updated product
     const updatedProduct = await product.save();
 
-    res.status(200).json(updatedProduct);
+    const averageRating = updatedProduct.getAverageRating();
+    res.status(200).json({ 
+      ...updatedProduct.toObject(), 
+      averageRating 
+  });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
