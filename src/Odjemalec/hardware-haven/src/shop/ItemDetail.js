@@ -19,7 +19,7 @@ function ItemDetail({ isAuthenticated, handleBasketChange }) {
   const location = useLocation();
 
   const { product } = location.state || {};
-  const userId = sessionStorage.getItem(USER_ID_KEY); // Get the user ID from session storage
+  const userId = sessionStorage.getItem(USER_ID_KEY);
 
   const fetchUserRating = async () => {
     if (product && userId) {
