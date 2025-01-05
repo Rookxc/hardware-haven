@@ -5,11 +5,13 @@ import { FiLogOut } from "react-icons/fi";
 import useOnlineStatus from './helpers/OnlineStatus';
 import axiosInstance from './helpers/AxiosInstance';
 import { FaShoppingBasket } from 'react-icons/fa';
+import { APP_VARIANT_KEY } from './App';
 
 function Layout({ isAuthenticated, itemCount }) {
-  const currentPath = window.location.pathname;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState({});
+
+  let assignedVariant = localStorage.getItem(APP_VARIANT_KEY);
 
   const isOnline = useOnlineStatus();
 
@@ -64,7 +66,7 @@ function Layout({ isAuthenticated, itemCount }) {
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             {isAuthenticated ?
               <div className="flex items-center space-x-2">
-                {currentPath === '/shop-v3' && (
+                {assignedVariant === 'C' && (
                   <a href="/basket" className="flex items-center justify-center text-white rounded-full w-12 h-12 relative">
                     <FaShoppingBasket className="h-6 w-6" />
                     {itemCount > 0 && (
@@ -146,7 +148,7 @@ function Layout({ isAuthenticated, itemCount }) {
 
       <Outlet />
 
-      {currentPath !== '/shop-v3' && (
+      {assignedVariant !== 'C' && (
           <div className={`fixed bottom-8 right-8`}>
             <a href="/basket" className="flex items-center justify-center bg-blue-500 text-white rounded-full w-12 h-12 hover:bg-blue-600 relative">
               <FaShoppingBasket className="h-6 w-6" />

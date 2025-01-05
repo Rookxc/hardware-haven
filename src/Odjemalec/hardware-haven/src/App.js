@@ -18,10 +18,32 @@ export const TOKEN_KEY = 'token';
 export const USER_ID_KEY = 'userId';
 export const BASKET_KEY = 'basketItems';
 
+export const APP_VARIANT_KEY = 'app-variant';
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [itemCount, setItemCount] = useState(0);
+
+  useEffect(() => {
+    let assignedVariant = localStorage.getItem(APP_VARIANT_KEY);
+    if (!assignedVariant) {
+      const rand = Math.random();
+      if (rand <= 0.33) {
+        assignedVariant = 'A';
+      } else if (rand <= 0.66) {
+        assignedVariant = 'B';
+      } else {
+        assignedVariant = 'C';
+      }
+
+      localStorage.setItem(APP_VARIANT_KEY, assignedVariant);
+    }
+
+    if (window.hj) {
+      window.hj('event', `variant-${assignedVariant}`);
+    }
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -63,8 +85,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout isAuthenticated={isAuthenticated} itemCount={itemCount} />}>
             <Route index element={<Shop isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} />} />
-            <Route path="shop-v2" element={<Shop isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} version={2}/>} />
-            <Route path="shop-v3" element={<Shop isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} version={3}/>} />
+            <Route path="shop-B" element={<Shop isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} />} />
+            <Route path="shop-C" element={<Shop isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} />} />
             <Route path="profile" element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />} />
             <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />

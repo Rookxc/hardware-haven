@@ -4,9 +4,9 @@ import axiosInstance from '../helpers/AxiosInstance';
 import { FaShoppingCart, FaCheckCircle, FaSearch } from 'react-icons/fa';
 import annyang from 'annyang';
 import useOnlineStatus from '../helpers/OnlineStatus';
-import { BASKET_KEY } from '../App';
+import { BASKET_KEY, APP_VARIANT_KEY } from '../App';
 
-function Shop({ isAuthenticated, handleBasketChange, version=1 }) {
+function Shop({ isAuthenticated, handleBasketChange }) {
   const [items, setItems] = useState([]);
   const [clickedItems, setClickedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,8 +18,21 @@ function Shop({ isAuthenticated, handleBasketChange, version=1 }) {
   const navigate = useNavigate();
   const isOnline = useOnlineStatus();
 
+  let assignedVariant = localStorage.getItem(APP_VARIANT_KEY);
+  const currentPath = window.location.pathname;
+
+  if (!currentPath.includes('-' + assignedVariant)) {
+    if (assignedVariant === 'A') {
+      if (currentPath.length > 1) {
+        navigate('/');
+      }
+    } else {
+      navigate('/shop-' + assignedVariant);
+    }
+  }
+
   const handleKeyDown = (event) => {
-    if (version === 2 && event.key === 'Enter') {
+    if (assignedVariant === 'B' && event.key === 'Enter') {
       handleSearch();
     }
   };
