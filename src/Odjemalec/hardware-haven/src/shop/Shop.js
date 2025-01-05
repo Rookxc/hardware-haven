@@ -6,7 +6,7 @@ import annyang from 'annyang';
 import useOnlineStatus from '../helpers/OnlineStatus';
 import { BASKET_KEY } from '../App';
 
-function Shop({ isAuthenticated, handleBasketChange }) {
+function Shop({ isAuthenticated, handleBasketChange, version=1 }) {
   const [items, setItems] = useState([]);
   const [clickedItems, setClickedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,6 +17,12 @@ function Shop({ isAuthenticated, handleBasketChange }) {
 
   const navigate = useNavigate();
   const isOnline = useOnlineStatus();
+
+  const handleKeyDown = (event) => {
+    if (version === 2 && event.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   const fetchAllProducts = async () => {
     try {
@@ -241,7 +247,10 @@ function Shop({ isAuthenticated, handleBasketChange }) {
               type="text"
               placeholder="Search..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => 
+                setSearchQuery(e.target.value)
+              }
+              onKeyDown={handleKeyDown}
               className="w-full p-2 rounded-md pl-10"
               disabled={!isOnline}
             />

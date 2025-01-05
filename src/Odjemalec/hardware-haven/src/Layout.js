@@ -7,6 +7,7 @@ import axiosInstance from './helpers/AxiosInstance';
 import { FaShoppingBasket } from 'react-icons/fa';
 
 function Layout({ isAuthenticated, itemCount }) {
+  const currentPath = window.location.pathname;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState({});
 
@@ -63,6 +64,13 @@ function Layout({ isAuthenticated, itemCount }) {
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             {isAuthenticated ?
               <div className="flex items-center space-x-2">
+                {currentPath === '/shop-v3' && (
+                  <a href="/basket" className="flex items-center justify-center text-white rounded-full w-12 h-12 relative">
+                    <FaShoppingBasket className="h-6 w-6" />
+                    {itemCount > 0 && (
+                      <span className="bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1 ml-1 absolute top-7 right-7">{itemCount}</span>
+                    )}
+                  </a>)}
                 <a href="/profile" className="text-sm font-semibold leading-6 text-white">
                   Profile
                 </a>
@@ -138,14 +146,17 @@ function Layout({ isAuthenticated, itemCount }) {
 
       <Outlet />
 
-      <div className={`fixed bottom-8 right-8`}>
-        <a href="/basket" className="flex items-center justify-center bg-blue-500 text-white rounded-full w-12 h-12 hover:bg-blue-600 relative">
-          <FaShoppingBasket className="h-6 w-6" />
-          {itemCount > 0 && (
-            <span className="bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1 ml-1 absolute top-7 right-7">{itemCount}</span>
-          )}
-        </a>
-      </div>
+      {currentPath !== '/shop-v3' && (
+          <div className={`fixed bottom-8 right-8`}>
+            <a href="/basket" className="flex items-center justify-center bg-blue-500 text-white rounded-full w-12 h-12 hover:bg-blue-600 relative">
+              <FaShoppingBasket className="h-6 w-6" />
+              {itemCount > 0 && (
+                <span className="bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1 ml-1 absolute top-7 right-7">{itemCount}</span>
+              )}
+            </a>
+          </div>
+        )
+      }
     </div>
   );
 }

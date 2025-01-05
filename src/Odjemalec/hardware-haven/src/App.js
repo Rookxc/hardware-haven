@@ -63,10 +63,12 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout isAuthenticated={isAuthenticated} itemCount={itemCount} />}>
             <Route index element={<Shop isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} />} />
+            <Route path="shop-v2" element={<Shop isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} version={2}/>} />
+            <Route path="shop-v3" element={<Shop isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} version={3}/>} />
             <Route path="profile" element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />} />
             <Route path="login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
             <Route path="register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
-            <Route path="item-detail/:id" element={<ItemDetail isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} /> } />
+            <Route path="item-detail/:id" element={<ItemDetail isAuthenticated={isAuthenticated} handleBasketChange={handleBasketChange} />} />
             <Route path="basket" element={isAuthenticated ? <Basket isAuthenticated={isAuthenticated} /> : <Navigate to="/login" />} />
             <Route path="/purchase-history" element={isAuthenticated ? <PurchaseHistory /> : <Navigate to="/login" />} />
             <Route path="/admin" element={isAuthenticated ? <Admin /> : <Navigate to="/login" />} />
